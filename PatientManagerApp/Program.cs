@@ -1,4 +1,6 @@
-using PatientMangerServices.Mapper;
+using Microsoft.EntityFrameworkCore;
+using PatientManagerServices.Mapper;
+using PatientManagerServices.Models;
 using PatientMangerServices.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,9 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add patient-manager-services to the container.
 
 builder.Services.AddAutoMapper(typeof(MapperProfile));
+var conf = builder.Configuration;
+builder.Services.AddDbContext<PmDbContext>(o => o.UseNpgsql(conf.GetConnectionString("Default")));
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<IPatientServices,PatientServices>();
+builder.Services.AddScoped<IPatientServices, PatientServices>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

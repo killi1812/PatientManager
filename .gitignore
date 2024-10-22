@@ -5,6 +5,7 @@
 .old
 .swap
 .log
+appsettings.json
 
 # User-specific files
 *.suo

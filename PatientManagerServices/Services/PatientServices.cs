@@ -1,4 +1,4 @@
-using PatientMangerServices.Models;
+using PatientManagerServices.Models;
 
 namespace PatientMangerServices.Services;
 

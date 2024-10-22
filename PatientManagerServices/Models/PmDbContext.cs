@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace PatientMangerServices.Models;
+namespace PatientManagerServices.Models;
 
 public class PmDbContext : DbContext
 {

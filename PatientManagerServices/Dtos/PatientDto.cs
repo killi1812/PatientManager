@@ -1,4 +1,4 @@
-namespace PatientMangerServices.Dtos;
+namespace PatientManagerServices.Dtos;
 
 public class PatientDto
 {

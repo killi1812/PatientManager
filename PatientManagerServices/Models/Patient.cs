@@ -1,4 +1,4 @@
-namespace PatientMangerServices.Models;
+namespace PatientManagerServices.Models;
 
 public class Patient
 {

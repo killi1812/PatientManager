@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace PatientMangerServices.Mapper;
+namespace PatientManagerServices.Mapper;
 
 public class MapperProfile : Profile
 {
