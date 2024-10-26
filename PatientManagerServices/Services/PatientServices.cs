@@ -1,6 +1,6 @@
 using PatientManagerServices.Models;
 
-namespace PatientMangerServices.Services;
+namespace PatientManagerServices.Services;
 
 public interface IPatientServices
 {

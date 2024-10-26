@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using PatientManagerServices.Mapper;
 using PatientManagerServices.Models;
-using PatientMangerServices.Services;
+using PatientManagerServices.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
