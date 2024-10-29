@@ -12,11 +12,11 @@ builder.Services.AddDbContext<PmDbContext>(o => o.UseNpgsql(conf.GetConnectionSt
 
 builder.Services.AddScoped<IPatientServices, PatientServices>();
 
-
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSwaggerGen();
 var app = builder.Build();
+
 // Configure the HTTP request pipeline.
 
 app.UseSwagger();
@@ -30,11 +30,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");
+app.MapControllerRoute(name: "default", pattern: "{controller}/{action=Index}/{id?}");
 
 app.MapFallbackToFile("index.html");
 
 app.Run();
+
