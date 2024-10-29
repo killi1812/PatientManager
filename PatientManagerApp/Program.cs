@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using PatientManagerServices.Mapper;
+using PatientManagerServices;
 using PatientManagerServices.Models;
 using PatientManagerServices.Services;
 

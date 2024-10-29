@@ -1,4 +1,6 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using PatientManagerServices.Extras;
 using PatientManagerServices.Models;
 
 namespace PatientManagerServices.Services;
@@ -14,12 +16,13 @@ public interface IPatientService
 
 public class PatientService : IPatientService
 {
-
     private readonly PmDbContext _context;
+    private readonly IMapper _mapper;
 
-    public PatientService(PmDbContext context)
+    public PatientService(PmDbContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
     public async Task<List<Patient>> GetPatients(string query = null)
@@ -33,23 +36,44 @@ public class PatientService : IPatientService
         throw new NotImplementedException();
     }
 
-    public Task<Patient> GetPatient(Guid guid)
+    public async Task<Patient> GetPatient(Guid guid)
     {
-        throw new NotImplementedException();
+        var patient = await _context.Patients
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Guid == guid);
+        if (patient == null) throw new NotFoundException($"Patient with guid {guid} was not found");
+        return patient;
     }
 
-    public Task<Patient> CreatePatient(Patient newPatient)
+    public async Task<Patient> CreatePatient(Patient newPatient)
     {
-        throw new NotImplementedException();
+        await _context.Patients.AddAsync(newPatient);
+        await _context.SaveChangesAsync();
+        return await _context.Patients.AsNoTracking().FirstOrDefaultAsync(p => p.Guid == newPatient.Guid) ??
+               throw new NotFoundException($"Patient with guid {newPatient.Guid} was not found");
     }
 
-    public Task DeletePatient(Guid guid)
+    public async Task DeletePatient(Guid guid)
     {
-        throw new NotImplementedException();
+        var patient = await _context.Patients
+            .FirstOrDefaultAsync(p => p.Guid == guid);
+        if (patient == null) throw new NotFoundException($"Patient with guid {guid} was not found");
+        _context.Patients.Remove(patient);
+        await _context.SaveChangesAsync();
     }
 
-    public Task<Patient> UpdatePatient(Guid guid, Patient newPatient)
+    public async Task<Patient> UpdatePatient(Guid guid, Patient newPatient)
     {
-        throw new NotImplementedException();
+        //TODO fix creates new patient
+        var patient = await _context.Patients
+            .FirstOrDefaultAsync(p => p.Guid == guid);
+        if (patient == null) throw new NotFoundException($"Patient with guid {guid} was not found");
+        patient = _mapper.Map<Patient>(newPatient);
+        //TODO add update when new props added
+        _context.Patients.Update(patient);
+        await _context.SaveChangesAsync();
+
+        return await _context.Patients.AsNoTracking().FirstOrDefaultAsync(p => p.Guid == guid) ??
+               throw new NotFoundException($"Patient with guid {guid} was not found");
     }
 }
