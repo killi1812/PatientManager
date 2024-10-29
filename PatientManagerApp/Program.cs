@@ -10,9 +10,9 @@ builder.Services.AddAutoMapper(typeof(MapperProfile));
 var conf = builder.Configuration;
 builder.Services.AddDbContext<PmDbContext>(o => o.UseNpgsql(conf.GetConnectionString("Default")));
 
-builder.Services.AddScoped<IPatientServices, PatientServices>();
+builder.Services.AddScoped<IPatientService, PatientService>();
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
 
 builder.Services.AddSwaggerGen();
 var app = builder.Build();
