@@ -15,5 +15,14 @@ public class MapperProfile : Profile
             .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid.ToString()));
         CreateMap<PatientDto,Patient>()
             .ForMember(dest => dest.Guid,opt => opt.Ignore());
+        
+        CreateMap<Illness,Illness>()
+            .ForMember(dest => dest.Guid, opt => opt.Ignore())
+            .ForMember(dest => dest.Id, opt => opt.Ignore());
+        
+        
+        CreateMap<Examination,Examination>()
+            .ForMember(dest => dest.Guid, opt => opt.Ignore())
+            .ForMember(dest => dest.Id, opt => opt.Ignore());
     }
 }

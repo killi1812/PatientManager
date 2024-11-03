@@ -11,4 +11,5 @@ public class MedicalHistory
     public Patient? Patient { get; set; }
      
     public List<Illness> PastIlnesses { get; set; }
+    public List<Examination> Examinations { get; set; }
 }

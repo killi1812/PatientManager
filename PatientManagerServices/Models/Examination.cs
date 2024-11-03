@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using PatientManagerServices.Models.Enums;
 
 namespace PatientManagerServices.Models;
@@ -10,8 +11,9 @@ public class Examination
     public DateTime ExaminationTime { get; set; }
     public ExaminationType Type { get; set; }
 
-    public int PatientId { get; set; }
-    public Patient Patient { get; set; }
+    [ForeignKey("MedicalHistory")]
+    public int MedicalHistoryId { get; set; }
+    public MedicalHistory MedicalHistory { get; set; }
 
     public int? IllnessId { get; set; }
     public Illness? Illness { get; set; }
