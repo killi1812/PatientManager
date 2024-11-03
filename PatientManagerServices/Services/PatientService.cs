@@ -64,12 +64,11 @@ public class PatientService : IPatientService
 
     public async Task<Patient> UpdatePatient(Guid guid, Patient newPatient)
     {
-        //TODO fix creates new patient
         var patient = await _context.Patients
             .FirstOrDefaultAsync(p => p.Guid == guid);
         if (patient == null) throw new NotFoundException($"Patient with guid {guid} was not found");
-        patient = _mapper.Map<Patient>(newPatient);
-        //TODO add update when new props added
+        //TODO this creates a new patient 
+        patient = _mapper.Map(newPatient,patient);
         _context.Patients.Update(patient);
         await _context.SaveChangesAsync();
 
