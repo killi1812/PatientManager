@@ -15,6 +15,7 @@ public class Examination
     public int MedicalHistoryId { get; set; }
     public MedicalHistory MedicalHistory { get; set; }
 
+    [ForeignKey("Illness")]
     public int? IllnessId { get; set; }
     public Illness? Illness { get; set; }
 }
