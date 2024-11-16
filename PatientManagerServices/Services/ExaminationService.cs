@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using PatientManagerServices.Dtos;
 using PatientManagerServices.Extras;
 using PatientManagerServices.Models;
 
@@ -7,19 +8,16 @@ namespace PatientManagerServices.Services;
 
 public interface IExaminationService
 {
-    Task<Examination> CreateExamination(Guid medicalHistoryGuid, Examination newExamination);
-    Task<Examination> CreateExamination(Guid medicalHistoryGuid, Guid illnesGuid, Examination newExamination);
+    Task<Examination> CreateExamination(Guid medicalHistoryGuid, Guid? illnesGuid, Examination newExamination);
     Task<Examination> GetExamination(Guid guid);
-    Task<Examination> UpdateExamination(Guid guid, Examination newExamination);
+    Task<Examination> UpdateExamination(Guid guid, NewExaminationDto newExamination);
     Task DeleteExamination(Guid guid);
-    Task<List<Examination>> GetExaminations(Guid illnessGuid);
+    Task<List<Examination>> GetExaminationsForIllness(Guid illnessGuid);
     Task<List<Examination>> GetAllExaminations(Guid medicalHistoryGuid);
-    
 }
 
 public class ExaminationService : IExaminationService
 {
-    
     private readonly PmDbContext _context;
     private readonly IMapper _mapper;
 
@@ -29,59 +27,104 @@ public class ExaminationService : IExaminationService
         _mapper = mapper;
     }
 
-    public async Task<Examination> CreateExamination(Guid medicalHistoryGuid, Examination newExamination)
+    public async Task<Examination> CreateExamination(Guid medicalHistoryGuid, Guid? illnesGuid,
+        Examination newExamination)
     {
         var medicalHistory = await _context.MedicalHistories.FirstOrDefaultAsync(mh => mh.Guid == medicalHistoryGuid);
         if (medicalHistory == null)
             throw new NotFoundException($"Medical history with guid {medicalHistoryGuid} was not found");
 
         newExamination.MedicalHistoryId = medicalHistory.Id;
+
+        if (illnesGuid.HasValue)
+        {
+            var illness = await _context.Illnesses.FirstOrDefaultAsync(i => i.Guid == illnesGuid);
+            if (illness == null)
+                throw new NotFoundException($"illness history with guid {medicalHistoryGuid} was not found");
+
+            newExamination.IllnessId = illness.Id;
+        }
+
         await _context.Examinations.AddAsync(newExamination);
         await _context.SaveChangesAsync();
+
         return await _context.Examinations.FirstOrDefaultAsync(e => e.Guid == newExamination.Guid) ??
                throw new NotFoundException($"Examination with guid {newExamination.Guid} was not found");
     }
 
-    public async Task<Examination> CreateExamination(Guid medicalHistoryGuid, Guid illnesGuid, Examination newExamination)
+    public async Task<Examination> GetExamination(Guid guid)
     {
-         var medicalHistory = await _context.MedicalHistories.FirstOrDefaultAsync(mh => mh.Guid == medicalHistoryGuid);
-         if (medicalHistory == null)
-             throw new NotFoundException($"Medical history with guid {medicalHistoryGuid} was not found");
+        var examination = await _context.Examinations.FirstOrDefaultAsync(e => e.Guid == guid);
+        if (examination == null)
+            throw new NotFoundException($"examination with guid: {guid} not found");
 
-         var illness = await _context.Illnesses.FirstOrDefaultAsync(i => i.Guid == illnesGuid);
-         if (illness == null)
-             throw new NotFoundException($"illness history with guid {medicalHistoryGuid} was not found");
-         
-         newExamination.MedicalHistoryId = medicalHistory.Id;
-         newExamination.IllnessId = illness.Id;
-         await _context.Examinations.AddAsync(newExamination);
-         await _context.SaveChangesAsync();
-         return await _context.Examinations.FirstOrDefaultAsync(e => e.Guid == newExamination.Guid) ??
-                throw new NotFoundException($"Examination with guid {newExamination.Guid} was not found");       
+        return examination;
     }
 
-    public Task<Examination> GetExamination(Guid guid)
+    public async Task<Examination> UpdateExamination(Guid guid, NewExaminationDto newExamination)
     {
-        throw new NotImplementedException();
+        var examination = await _context.Examinations.FirstOrDefaultAsync(e => e.Guid == guid);
+        if (examination == null)
+            throw new NotFoundException($"examination with guid: {guid} not found");
+
+        examination = _mapper.Map(newExamination, examination);
+
+        var medicalHistory =
+            await _context.MedicalHistories.FirstOrDefaultAsync(mh =>
+                mh.Guid == Guid.Parse(newExamination.MedicalHistoryGuid));
+        if (medicalHistory == null)
+            throw new NotFoundException($"Medical history with guid {newExamination.MedicalHistoryGuid} was not found");
+
+        examination.MedicalHistoryId = medicalHistory.Id;
+
+        if (newExamination.IllnessGuid != null)
+        {
+            var illness = await _context.Illnesses.FirstOrDefaultAsync(i => i.Guid == Guid.Parse(newExamination.IllnessGuid));
+            if (illness == null)
+                throw new NotFoundException($"Illness with guid {guid} was not found");
+
+            examination.IllnessId = illness.Id;
+        }
+
+
+        //TODO check if works
+        //_context.Examinations.Update(examination);
+        await _context.SaveChangesAsync();
+
+        return await _context.Examinations.FirstOrDefaultAsync(e => e.Guid == guid)
+               ?? throw new NotFoundException($"examination with guid: {guid} not found");
     }
 
-    public Task<Examination> UpdateExamination(Guid guid, Examination newExamination)
+    public async Task DeleteExamination(Guid guid)
     {
-        throw new NotImplementedException();
+        var examination = await _context.Examinations.FirstOrDefaultAsync(e => e.Guid == guid);
+        if (examination == null)
+            throw new NotFoundException($"examination with guid: {guid} not found");
+
+        _context.Examinations.Remove(examination);
+        await _context.SaveChangesAsync();
     }
 
-    public Task DeleteExamination(Guid guid)
+    public async Task<List<Examination>> GetExaminationsForIllness(Guid illnessGuid)
     {
-        throw new NotImplementedException();
+        var examinations = await _context.Examinations
+            .AsNoTracking()
+            .Where(e => e.Illness.Guid == illnessGuid)
+            .Include(e => e.Illness)
+            .Include(e => e.MedicalHistory)
+            .ToListAsync();
+
+        return examinations;
     }
 
-    public Task<List<Examination>> GetExaminations(Guid illnessGuid)
+    public async Task<List<Examination>> GetAllExaminations(Guid medicalHistoryGuid)
     {
-        throw new NotImplementedException();
-    }
+        var examinations = await _context.Examinations.Where(e => e.MedicalHistory.Guid == medicalHistoryGuid)
+            .AsNoTracking()
+            .Include(e => e.MedicalHistory)
+            .Include(e => e.MedicalHistory)
+            .ToListAsync();
 
-    public Task<List<Examination>> GetAllExaminations(Guid medicalHistoryGuid)
-    {
-        throw new NotImplementedException();
+        return examinations;
     }
 }

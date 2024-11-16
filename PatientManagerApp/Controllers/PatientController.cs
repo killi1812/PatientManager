@@ -28,11 +28,11 @@ public class PatientController : ControllerBase
     }
 
     [HttpGet("[action]/{guid}")]
-    public async Task<PatientDto> GetPatient([FromRoute] string guid)
+    public async Task<IActionResult> GetPatient([FromRoute] string guid)
     {
         var patient = await _patientService.GetPatient(Guid.Parse(guid));
         var pMapped = _mapper.Map<PatientDto>(patient);
-        return pMapped;
+        return Ok(pMapped);
     }
 
     [HttpDelete("[action]/{guid}")]
@@ -56,4 +56,5 @@ public class PatientController : ControllerBase
         var pMapped = _mapper.Map<PatientDto>(patient);
         return pMapped;
     }
+    
 }

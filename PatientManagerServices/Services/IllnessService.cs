@@ -25,11 +25,22 @@ public class IllnessService : IIllnessService
         _mapper = mapper;
     }
 
-    public Task<List<Illness>> GetPatientIllnesses(Guid medicalHistoryGuid)
+    public async Task<List<Illness>> GetPatientIllnesses(Guid medicalHistoryGuid)
     {
-        throw new NotImplementedException();
+        var illnesses = await _context.MedicalHistories
+            . AsNoTracking()
+            .Where(mh => mh.Guid == medicalHistoryGuid)
+            .SelectMany(mh => mh.PastIlnesses)
+            .Include(il => il.MedicalHistory)
+            .Include(il => il.Examinations)
+            .ToListAsync();
+        
+        if (illnesses == null)
+            throw new NotFoundException($"Medical history with guid: {medicalHistoryGuid} not found");
+        
+        return illnesses;
     }
-
+    
     public async Task<Illness> GetIllness(Guid guid)
     {
         var illness = await _context.Illnesses
@@ -56,10 +67,10 @@ public class IllnessService : IIllnessService
 
     public async Task DeleteIllness(Guid guid)
     {
-        var illness = await _context.Illnesses
-            .FirstOrDefaultAsync(i => i.Guid == guid);
+        var illness = await _context.Illnesses .FirstOrDefaultAsync(i => i.Guid == guid);
         if (illness == null)
             throw new NotFoundException($"Illness with guid {guid} was not found");
+        
         _context.Illnesses.Remove(illness);
         await _context.SaveChangesAsync();
     }

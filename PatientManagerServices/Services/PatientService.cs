@@ -29,9 +29,11 @@ public class PatientService : IPatientService
     {
         if (String.IsNullOrEmpty(query))
         {
-            var patients = await _context.Patients.ToListAsync();
+            var patients = await _context.Patients
+                .ToListAsync();
             return patients;
         }
+
 
         throw new NotImplementedException();
     }
@@ -40,6 +42,7 @@ public class PatientService : IPatientService
     {
         var patient = await _context.Patients
             .AsNoTracking()
+            .Include(p => p.MedicalHistory)
             .FirstOrDefaultAsync(p => p.Guid == guid);
         if (patient == null) throw new NotFoundException($"Patient with guid {guid} was not found");
         return patient;
@@ -47,8 +50,15 @@ public class PatientService : IPatientService
 
     public async Task<Patient> CreatePatient(Patient newPatient)
     {
+        
+        var mh = new MedicalHistory();
+        await _context.MedicalHistories.AddAsync(mh);
+        
+        newPatient.MedicalHistory = mh;
         await _context.Patients.AddAsync(newPatient);
+        
         await _context.SaveChangesAsync();
+
         return await _context.Patients.AsNoTracking().FirstOrDefaultAsync(p => p.Guid == newPatient.Guid) ??
                throw new NotFoundException($"Patient with guid {newPatient.Guid} was not found");
     }
@@ -68,7 +78,7 @@ public class PatientService : IPatientService
             .FirstOrDefaultAsync(p => p.Guid == guid);
         if (patient == null) throw new NotFoundException($"Patient with guid {guid} was not found");
         //TODO this creates a new patient 
-        patient = _mapper.Map(newPatient,patient);
+        patient = _mapper.Map(newPatient, patient);
         _context.Patients.Update(patient);
         await _context.SaveChangesAsync();
 
