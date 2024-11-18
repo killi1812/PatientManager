@@ -12,6 +12,7 @@ builder.Services.AddDbContext<PmDbContext>(o => o.UseNpgsql(conf.GetConnectionSt
 
 builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IIllnessService, IllnessService>();
+builder.Services.AddScoped<IExaminationService, ExaminationService>();
 
 builder.Services.AddControllers();
 

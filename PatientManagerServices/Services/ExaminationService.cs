@@ -35,6 +35,7 @@ public class ExaminationService : IExaminationService
             throw new NotFoundException($"Medical history with guid {medicalHistoryGuid} was not found");
 
         newExamination.MedicalHistoryId = medicalHistory.Id;
+        //newExamination.ExaminationTime = DateTime.UtcNow;
 
         if (illnesGuid.HasValue)
         {

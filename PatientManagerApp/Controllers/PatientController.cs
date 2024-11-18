@@ -52,9 +52,8 @@ public class PatientController : ControllerBase
     [HttpPut("[action]/{guid}")]
     public async Task<PatientDto> UpdatePatient([FromRoute] string guid, [FromForm] PatientDto patientDto)
     {
-        var patient = await _patientService.UpdatePatient(Guid.Parse(guid),_mapper.Map<Patient>(patientDto));
+        var patient = await _patientService.UpdatePatient(Guid.Parse(guid), _mapper.Map<Patient>(patientDto));
         var pMapped = _mapper.Map<PatientDto>(patient);
         return pMapped;
     }
-    
 }
