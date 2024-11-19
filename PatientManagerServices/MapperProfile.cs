@@ -35,8 +35,8 @@ public class MapperProfile : Profile
                 opt.PreCondition(src => src.End != null);
                 opt.MapFrom(src => DateOnly.Parse(src.End!));
             });
-            
-        CreateMap<Examination,Examination>()
+
+        CreateMap<Examination, Examination>()
             .ForMember(dest => dest.Guid, opt => opt.Ignore())
             .ForMember(dest => dest.Id, opt => opt.Ignore());
         CreateMap<Examination,ExaminationDto>()

@@ -55,7 +55,10 @@ public class ExaminationService : IExaminationService
 
     public async Task<Examination> GetExamination(Guid guid)
     {
-        var examination = await _context.Examinations.FirstOrDefaultAsync(e => e.Guid == guid);
+        var examination = await _context.Examinations
+            .AsNoTracking()
+            .Include(e => e.Illness)
+            .FirstOrDefaultAsync(e => e.Guid == guid);
         if (examination == null)
             throw new NotFoundException($"examination with guid: {guid} not found");
 
@@ -111,7 +114,6 @@ public class ExaminationService : IExaminationService
         var examinations = await _context.Examinations
             .AsNoTracking()
             .Where(e => e.Illness.Guid == illnessGuid)
-            .Include(e => e.Illness)
             .Include(e => e.MedicalHistory)
             .ToListAsync();
 
@@ -123,7 +125,7 @@ public class ExaminationService : IExaminationService
         var examinations = await _context.Examinations.Where(e => e.MedicalHistory.Guid == medicalHistoryGuid)
             .AsNoTracking()
             .Include(e => e.MedicalHistory)
-            .Include(e => e.MedicalHistory)
+            .Include(e => e.Illness)
             .ToListAsync();
 
         return examinations;
