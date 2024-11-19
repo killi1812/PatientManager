@@ -20,19 +20,19 @@ public class PatientController : ControllerBase
     }
 
     [HttpGet("[action]")]
-    public async Task<List<PatientDto>> GetPatients()
+    public async Task<IActionResult> GetPatients()
     {
         var patients = await _patientService.GetPatients();
-        var pMapped = _mapper.Map<List<PatientDto>>(patients);
-        return pMapped;
+        var dtos = _mapper.Map<List<PatientDto>>(patients);
+        return Ok(dtos);
     }
 
     [HttpGet("[action]/{guid}")]
     public async Task<IActionResult> GetPatient([FromRoute] string guid)
     {
         var patient = await _patientService.GetPatient(Guid.Parse(guid));
-        var pMapped = _mapper.Map<PatientDto>(patient);
-        return Ok(pMapped);
+        var dto = _mapper.Map<PatientDto>(patient);
+        return Ok(dto);
     }
 
     [HttpDelete("[action]/{guid}")]
@@ -42,18 +42,19 @@ public class PatientController : ControllerBase
     }
 
     [HttpPost("[action]")]
-    public async Task<PatientDto> CreatePatient([FromForm] PatientDto patientDto)
+    public async Task<IActionResult> CreatePatient([FromForm] PatientDto patientDto)
     {
         var patient = await _patientService.CreatePatient(_mapper.Map<Patient>(patientDto));
-        var pMapped = _mapper.Map<PatientDto>(patient);
-        return pMapped;
+        var dto = _mapper.Map<PatientDto>(patient);
+        return Ok(dto);
     }
 
     [HttpPut("[action]/{guid}")]
-    public async Task<PatientDto> UpdatePatient([FromRoute] string guid, [FromForm] PatientDto patientDto)
+    public async Task<IActionResult> UpdatePatient([FromRoute] string guid, [FromForm] PatientDto patientDto)
     {
-        var patient = await _patientService.UpdatePatient(Guid.Parse(guid), _mapper.Map<Patient>(patientDto));
-        var pMapped = _mapper.Map<PatientDto>(patient);
-        return pMapped;
+        var patient = await _patientService.UpdatePatient(Guid.Parse(guid),_mapper.Map<Patient>(patientDto));
+        var dto = _mapper.Map<PatientDto>(patient);
+        return Ok(dto);
     }
+    
 }
