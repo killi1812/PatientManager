@@ -36,12 +36,15 @@ public class PatientService : IPatientService
             .AsNoTracking()
             .OrderBy(p => p.Surname)
             .ThenBy(p => p.Name);
-
+    
         if (!String.IsNullOrEmpty(q))
         {
-            qPatients = qPatients .Where(p => (p.Surname + " "+ p.Name).ToLower().Contains(q.ToLower()));
+            qPatients = qPatients.Where(p => p.Mbo.Contains(q));
+            if (!qPatients.Any())
+                //TODO debug this does not returns 0 results for some reason with query cvok 
+                qPatients = qPatients.Where(p => p.NameNormalized.Contains(q.ToLower()));
+                var list = qPatients.ToList();
         }
-
         return await qPatients
             .Skip(n * (page - 1))
             .Take(n)

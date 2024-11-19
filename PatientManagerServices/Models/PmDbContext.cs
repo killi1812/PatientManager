@@ -12,4 +12,9 @@ public class PmDbContext : DbContext
     public DbSet<Illness> Illnesses { get; set; }
     public DbSet<Examination> Examinations { get; set; }
     public DbSet<MedicalHistory> MedicalHistories { get; set; }
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Patient>().HasAlternateKey(u => u.NameNormalized);
+    }    
 }

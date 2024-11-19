@@ -18,7 +18,8 @@ public class MapperProfile : Profile
             .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid.ToString()))
             .ForMember(dest => dest.MedicalHistoryGuid, opt => opt.MapFrom(src => src.MedicalHistory.Guid));
         CreateMap<PatientDto,Patient>()
-            .ForMember(dest => dest.Guid,opt => opt.Ignore());
+            .ForMember(dest => dest.Guid,opt => opt.Ignore())
+            .ForMember(dest => dest.NameNormalized, opt => opt.MapFrom(src => (src.Surname + " "+ src.Name).ToLower()));
         
         CreateMap<Illness,Illness>()
             .ForMember(dest => dest.Guid, opt => opt.Ignore())

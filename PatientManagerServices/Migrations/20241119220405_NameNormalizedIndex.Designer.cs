@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PatientManagerServices.Models;
@@ -11,9 +12,11 @@ using PatientManagerServices.Models;
 namespace PatientManagerServices.Migrations
 {
     [DbContext(typeof(PmDbContext))]
-    partial class PmDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241119220405_NameNormalizedIndex")]
+    partial class NameNormalizedIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
