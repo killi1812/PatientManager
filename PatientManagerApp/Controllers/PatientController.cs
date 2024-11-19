@@ -20,9 +20,10 @@ public class PatientController : ControllerBase
     }
 
     [HttpGet("[action]")]
-    public async Task<IActionResult> GetPatients()
+    public async Task<IActionResult> GetPatients([FromQuery] string q = null, [FromQuery] int page = 1,
+        [FromQuery] int n = 10)
     {
-        var patients = await _patientService.GetPatients();
+        var patients = await _patientService.GetPatients(q, page, n);
         var dtos = _mapper.Map<List<PatientDto>>(patients);
         return Ok(dtos);
     }
@@ -52,9 +53,8 @@ public class PatientController : ControllerBase
     [HttpPut("[action]/{guid}")]
     public async Task<IActionResult> UpdatePatient([FromRoute] string guid, [FromForm] PatientDto patientDto)
     {
-        var patient = await _patientService.UpdatePatient(Guid.Parse(guid),_mapper.Map<Patient>(patientDto));
+        var patient = await _patientService.UpdatePatient(Guid.Parse(guid), _mapper.Map<Patient>(patientDto));
         var dto = _mapper.Map<PatientDto>(patient);
         return Ok(dto);
     }
-    
 }

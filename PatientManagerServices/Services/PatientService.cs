@@ -1,4 +1,6 @@
+using System.Runtime.InteropServices;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PatientManagerServices.Extras;
 using PatientManagerServices.Models;
@@ -7,7 +9,7 @@ namespace PatientManagerServices.Services;
 
 public interface IPatientService
 {
-    Task<List<Patient>> GetPatients(string query = null);
+    Task<List<Patient>> GetPatients(string q, int page, int n);
     Task<Patient> GetPatient(Guid guid);
     Task<Patient> CreatePatient(Patient newPatient);
     Task DeletePatient(Guid guid);
@@ -25,17 +27,25 @@ public class PatientService : IPatientService
         _mapper = mapper;
     }
 
-    public async Task<List<Patient>> GetPatients(string query = null)
+    public async Task<List<Patient>> GetPatients(string q, int page, int n)
     {
-        if (String.IsNullOrEmpty(query))
+        if (page < 1)
+            throw new Exception("Page can't be less then 1");
+
+        IQueryable<Patient> qPatients = _context.Patients
+            .AsNoTracking()
+            .OrderBy(p => p.Surname)
+            .ThenBy(p => p.Name);
+
+        if (!String.IsNullOrEmpty(q))
         {
-            var patients = await _context.Patients
-                .ToListAsync();
-            return patients;
+            qPatients = qPatients .Where(p => (p.Surname + " "+ p.Name).ToLower().Contains(q.ToLower()));
         }
 
-
-        throw new NotImplementedException();
+        return await qPatients
+            .Skip(n * (page - 1))
+            .Take(n)
+            .ToListAsync();
     }
 
     public async Task<Patient> GetPatient(Guid guid)
@@ -50,13 +60,12 @@ public class PatientService : IPatientService
 
     public async Task<Patient> CreatePatient(Patient newPatient)
     {
-        
         var mh = new MedicalHistory();
         await _context.MedicalHistories.AddAsync(mh);
-        
+
         newPatient.MedicalHistory = mh;
         await _context.Patients.AddAsync(newPatient);
-        
+
         await _context.SaveChangesAsync();
 
         return await _context.Patients.AsNoTracking().FirstOrDefaultAsync(p => p.Guid == newPatient.Guid) ??
@@ -77,9 +86,7 @@ public class PatientService : IPatientService
         var patient = await _context.Patients
             .FirstOrDefaultAsync(p => p.Guid == guid);
         if (patient == null) throw new NotFoundException($"Patient with guid {guid} was not found");
-        //TODO this creates a new patient 
-        patient = _mapper.Map(newPatient, patient);
-        _context.Patients.Update(patient);
+        _mapper.Map(newPatient, patient);
         await _context.SaveChangesAsync();
 
         return await _context.Patients.AsNoTracking().FirstOrDefaultAsync(p => p.Guid == guid) ??

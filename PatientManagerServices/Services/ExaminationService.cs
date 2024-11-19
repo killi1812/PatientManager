@@ -89,12 +89,9 @@ public class ExaminationService : IExaminationService
 
             examination.IllnessId = illness.Id;
         }
-
-
-        //TODO check if works
-        //_context.Examinations.Update(examination);
+        
         await _context.SaveChangesAsync();
-
+        
         return await _context.Examinations.FirstOrDefaultAsync(e => e.Guid == guid)
                ?? throw new NotFoundException($"examination with guid: {guid} not found");
     }

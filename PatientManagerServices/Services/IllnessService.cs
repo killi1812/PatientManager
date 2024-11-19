@@ -81,8 +81,7 @@ public class IllnessService : IIllnessService
         var illness = await _context.Illnesses.FirstOrDefaultAsync(i => i.Guid == guid);
         if (illness == null)
             throw new NotFoundException($"Illness with guid {guid} was not found");
-        illness = _mapper.Map(newIllness, illness);
-        _context.Illnesses.Update(illness);
+        _mapper.Map(newIllness, illness);
         await _context.SaveChangesAsync();
         return illness;
     }

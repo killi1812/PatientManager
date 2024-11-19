@@ -11,7 +11,9 @@ public class MapperProfile : Profile
     {
         CreateMap<Patient, Patient>()
             .ForMember(dest => dest.Guid, opt => opt.Ignore())
-            .ForMember(dest => dest.Id, opt => opt.Ignore());
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.MedicalHistoryId, opt => opt.Ignore())
+            .ForMember(dest => dest.MedicalHistory, opt => opt.Ignore());
         CreateMap<Patient, PatientDto>()
             .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid.ToString()))
             .ForMember(dest => dest.MedicalHistoryGuid, opt => opt.MapFrom(src => src.MedicalHistory.Guid));
