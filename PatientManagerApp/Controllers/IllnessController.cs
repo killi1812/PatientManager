@@ -26,10 +26,10 @@ public class IllnessController : ControllerBase
         return Ok(dto);
     }
 
-    [HttpGet("[action]/{guid}")]
-    public async Task<IActionResult> GetIlnessesForPatients([FromRoute] string guid)
+    [HttpGet("[action]/{medicalHistoryGuid}")]
+    public async Task<IActionResult> GetIlnessesForPatients([FromRoute] string medicalHistoryGuid)
     {
-        var illnesses = await _illnessService.GetPatientIllnesses(Guid.Parse(guid));
+        var illnesses = await _illnessService.GetPatientIllnesses(Guid.Parse(medicalHistoryGuid));
         var dtos = _mapper.Map<List<IllnessDto>>(illnesses);
         return Ok(dtos);
     }
@@ -41,10 +41,12 @@ public class IllnessController : ControllerBase
     }
 
     [HttpPost("[action]/{medicalHistoryGuid}")]
-    public async Task<IActionResult> CreateIllness([FromRoute] string medicalHistoryGuid, [FromForm] IllnessDto illnessDto)
+    public async Task<IActionResult> CreateIllness([FromRoute] string medicalHistoryGuid,
+        [FromForm] IllnessDto illnessDto)
     {
-        var illness = await _illnessService.CreateIllness(Guid.Parse(medicalHistoryGuid), _mapper.Map<Illness>(illnessDto));
-        var dto = _mapper.Map<PatientDto>(illness);
+        var illness =
+            await _illnessService.CreateIllness(Guid.Parse(medicalHistoryGuid), _mapper.Map<Illness>(illnessDto));
+        var dto = _mapper.Map<IllnessDto>(illness);
         return Ok(dto);
     }
 
@@ -52,7 +54,17 @@ public class IllnessController : ControllerBase
     public async Task<IActionResult> UpdateIllness([FromRoute] string guid, [FromForm] IllnessDto illnessDto)
     {
         var illness = await _illnessService.UpdateIllness(Guid.Parse(guid), _mapper.Map<Illness>(illnessDto));
-        var dto = _mapper.Map<PatientDto>(illness);
+        var dto = _mapper.Map<IllnessDto>(illness);
+        return Ok(dto);
+    }
+
+    [HttpPut("[action]/{guid}")]
+    public async Task<IActionResult> EndIllness([FromRoute] string guid)
+    {
+        
+        throw new NotImplementedException();
+        var illness = await _illnessService.GetIllness(Guid.Parse(guid));
+        var dto = _mapper.Map<IllnessDto>(illness);
         return Ok(dto);
     }
 }

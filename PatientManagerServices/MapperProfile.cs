@@ -20,11 +20,21 @@ public class MapperProfile : Profile
         
         CreateMap<Illness,Illness>()
             .ForMember(dest => dest.Guid, opt => opt.Ignore())
-            .ForMember(dest => dest.Id, opt => opt.Ignore());
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.MedicalHistory, opt => opt.Ignore())
+            .ForMember(dest => dest.MedicalHistoryId, opt => opt.Ignore())
+            .ForMember(dest => dest.Examinations, opt => opt.Ignore());
         CreateMap<Illness, IllnessDto>()
             .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid.ToString()));
         CreateMap<IllnessDto, Illness>()
-            .ForMember(dest => dest.Guid, opt => opt.Ignore());
+            .ForMember(dest => dest.Guid, opt => opt.Ignore())
+            .ForMember(dest => dest.Examinations, opt => opt.Ignore())
+            .ForMember(dest => dest.Start, opt => opt.MapFrom(src => DateOnly.Parse(src.Start)))
+            .ForMember(dest => dest.End, opt =>
+            {
+                opt.PreCondition(src => src.End != null);
+                opt.MapFrom(src => DateOnly.Parse(src.End!));
+            });
             
         CreateMap<Examination,Examination>()
             .ForMember(dest => dest.Guid, opt => opt.Ignore())

@@ -32,7 +32,6 @@ public class IllnessService : IIllnessService
             .Where(mh => mh.Guid == medicalHistoryGuid)
             .SelectMany(mh => mh.PastIlnesses)
             .Include(il => il.MedicalHistory)
-            .Include(il => il.Examinations)
             .ToListAsync();
         
         if (illnesses == null)
@@ -45,6 +44,8 @@ public class IllnessService : IIllnessService
     {
         var illness = await _context.Illnesses
             .AsNoTracking()
+            .Include(il => il.MedicalHistory)
+            .Include(il => il.Examinations)
             .FirstOrDefaultAsync(i => i.Guid == guid);
         if (illness == null)
             throw new NotFoundException($"Illness with guid {guid} was not found");
