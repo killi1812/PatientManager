@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PatientManagerServices.Models;
@@ -11,9 +12,11 @@ using PatientManagerServices.Models;
 namespace PatientManagerServices.Migrations
 {
     [DbContext(typeof(PmDbContext))]
-    partial class PmDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241127103728_PrescriptionRelations")]
+    partial class PrescriptionRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -112,18 +115,10 @@ namespace PatientManagerServices.Migrations
                     b.Property<Guid>("Guid")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Mbo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<int>("MedicalHistoryId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("NameNormalized")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -132,8 +127,6 @@ namespace PatientManagerServices.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasAlternateKey("NameNormalized");
 
                     b.HasIndex("MedicalHistoryId");
 

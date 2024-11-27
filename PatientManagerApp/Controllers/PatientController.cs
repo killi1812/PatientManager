@@ -19,33 +19,33 @@ public class PatientController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet("[action]")]
-    public async Task<IActionResult> GetPatients([FromQuery] string q = null, [FromQuery] int page = 1,
-        [FromQuery] int n = 10)
+    [HttpGet]
+    public async Task<IActionResult> GetPatients([FromQuery] string q = null, [FromQuery] int page = 1, [FromQuery] int n = 10)
     {
-        var patients = await _patientService.GetPatients(q, page, n);
-        var dtos = _mapper.Map<List<PatientDto>>(patients);
-        return Ok(dtos);
+        var patients = await _patientService.GetAll(q, page, n);
+        var dto = _mapper.Map<List<PatientDto>>(patients);
+        return Ok(dto);
     }
 
-    [HttpGet("[action]/{guid}")]
+    [HttpGet("{guid}")]
     public async Task<IActionResult> GetPatient([FromRoute] string guid)
     {
-        var patient = await _patientService.GetPatient(Guid.Parse(guid));
+        var patient = await _patientService.Get(Guid.Parse(guid));
         var dto = _mapper.Map<PatientDto>(patient);
         return Ok(dto);
     }
 
-    [HttpDelete("[action]/{guid}")]
-    public async Task DeletePatient([FromRoute] string guid)
+    [HttpDelete("{guid}")]
+    public async Task<IActionResult> DeletePatient([FromRoute] string guid)
     {
-        await _patientService.DeletePatient(Guid.Parse(guid));
+        await _patientService.Delete(Guid.Parse(guid));
+        return NoContent();
     }
 
     [HttpPost("[action]")]
     public async Task<IActionResult> CreatePatient([FromForm] PatientDto patientDto)
     {
-        var patient = await _patientService.CreatePatient(_mapper.Map<Patient>(patientDto));
+        var patient = await _patientService.Create(_mapper.Map<Patient>(patientDto));
         var dto = _mapper.Map<PatientDto>(patient);
         return Ok(dto);
     }
@@ -53,7 +53,7 @@ public class PatientController : ControllerBase
     [HttpPut("[action]/{guid}")]
     public async Task<IActionResult> UpdatePatient([FromRoute] string guid, [FromForm] PatientDto patientDto)
     {
-        var patient = await _patientService.UpdatePatient(Guid.Parse(guid), _mapper.Map<Patient>(patientDto));
+        var patient = await _patientService.Update(Guid.Parse(guid), _mapper.Map<Patient>(patientDto));
         var dto = _mapper.Map<PatientDto>(patient);
         return Ok(dto);
     }

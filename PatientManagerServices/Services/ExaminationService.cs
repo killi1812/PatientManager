@@ -8,12 +8,12 @@ namespace PatientManagerServices.Services;
 
 public interface IExaminationService
 {
-    Task<Examination> CreateExamination(Guid medicalHistoryGuid, Guid? illnesGuid, Examination newExamination);
-    Task<Examination> GetExamination(Guid guid);
-    Task<Examination> UpdateExamination(Guid guid, NewExaminationDto newExamination);
-    Task DeleteExamination(Guid guid);
-    Task<List<Examination>> GetExaminationsForIllness(Guid illnessGuid);
-    Task<List<Examination>> GetAllExaminations(Guid medicalHistoryGuid);
+    Task<Examination> Create(Guid medicalHistoryGuid, Guid? illnesGuid, Examination newExamination);
+    Task<Examination> Get(Guid guid);
+    Task<Examination> Update(Guid guid, NewExaminationDto newExamination);
+    Task Delete(Guid guid);
+    Task<List<Examination>> GetForIllness(Guid illnessGuid);
+    Task<List<Examination>> GetAll(Guid medicalHistoryGuid);
 }
 
 public class ExaminationService : IExaminationService
@@ -27,7 +27,7 @@ public class ExaminationService : IExaminationService
         _mapper = mapper;
     }
 
-    public async Task<Examination> CreateExamination(Guid medicalHistoryGuid, Guid? illnesGuid,
+    public async Task<Examination> Create(Guid medicalHistoryGuid, Guid? illnesGuid,
         Examination newExamination)
     {
         var medicalHistory = await _context.MedicalHistories.FirstOrDefaultAsync(mh => mh.Guid == medicalHistoryGuid);
@@ -53,7 +53,7 @@ public class ExaminationService : IExaminationService
                throw new NotFoundException($"Examination with guid {newExamination.Guid} was not found");
     }
 
-    public async Task<Examination> GetExamination(Guid guid)
+    public async Task<Examination> Get(Guid guid)
     {
         var examination = await _context.Examinations
             .AsNoTracking()
@@ -65,7 +65,7 @@ public class ExaminationService : IExaminationService
         return examination;
     }
 
-    public async Task<Examination> UpdateExamination(Guid guid, NewExaminationDto newExamination)
+    public async Task<Examination> Update(Guid guid, NewExaminationDto newExamination)
     {
         var examination = await _context.Examinations.FirstOrDefaultAsync(e => e.Guid == guid);
         if (examination == null)
@@ -96,7 +96,7 @@ public class ExaminationService : IExaminationService
                ?? throw new NotFoundException($"examination with guid: {guid} not found");
     }
 
-    public async Task DeleteExamination(Guid guid)
+    public async Task Delete(Guid guid)
     {
         var examination = await _context.Examinations.FirstOrDefaultAsync(e => e.Guid == guid);
         if (examination == null)
@@ -106,7 +106,7 @@ public class ExaminationService : IExaminationService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<List<Examination>> GetExaminationsForIllness(Guid illnessGuid)
+    public async Task<List<Examination>> GetForIllness(Guid illnessGuid)
     {
         var examinations = await _context.Examinations
             .AsNoTracking()
@@ -117,7 +117,7 @@ public class ExaminationService : IExaminationService
         return examinations;
     }
 
-    public async Task<List<Examination>> GetAllExaminations(Guid medicalHistoryGuid)
+    public async Task<List<Examination>> GetAll(Guid medicalHistoryGuid)
     {
         var examinations = await _context.Examinations.Where(e => e.MedicalHistory.Guid == medicalHistoryGuid)
             .AsNoTracking()

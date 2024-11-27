@@ -9,11 +9,11 @@ namespace PatientManagerServices.Services;
 
 public interface IPatientService
 {
-    Task<List<Patient>> GetPatients(string q, int page, int n);
-    Task<Patient> GetPatient(Guid guid);
-    Task<Patient> CreatePatient(Patient newPatient);
-    Task DeletePatient(Guid guid);
-    Task<Patient> UpdatePatient(Guid guid, Patient newPatient);
+    Task<List<Patient>> GetAll(string q, int page, int n);
+    Task<Patient> Get(Guid guid);
+    Task<Patient> Create(Patient newPatient);
+    Task Delete(Guid guid);
+    Task<Patient> Update(Guid guid, Patient newPatient);
 }
 
 public class PatientService : IPatientService
@@ -27,7 +27,7 @@ public class PatientService : IPatientService
         _mapper = mapper;
     }
 
-    public async Task<List<Patient>> GetPatients(string q, int page, int n)
+    public async Task<List<Patient>> GetAll(string q, int page, int n)
     {
         if (page < 1)
             throw new Exception("Page can't be less then 1");
@@ -51,7 +51,7 @@ public class PatientService : IPatientService
             .ToListAsync();
     }
 
-    public async Task<Patient> GetPatient(Guid guid)
+    public async Task<Patient> Get(Guid guid)
     {
         var patient = await _context.Patients
             .AsNoTracking()
@@ -61,7 +61,7 @@ public class PatientService : IPatientService
         return patient;
     }
 
-    public async Task<Patient> CreatePatient(Patient newPatient)
+    public async Task<Patient> Create(Patient newPatient)
     {
         var mh = new MedicalHistory();
         await _context.MedicalHistories.AddAsync(mh);
@@ -75,7 +75,7 @@ public class PatientService : IPatientService
                throw new NotFoundException($"Patient with guid {newPatient.Guid} was not found");
     }
 
-    public async Task DeletePatient(Guid guid)
+    public async Task Delete(Guid guid)
     {
         var patient = await _context.Patients
             .FirstOrDefaultAsync(p => p.Guid == guid);
@@ -84,7 +84,7 @@ public class PatientService : IPatientService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<Patient> UpdatePatient(Guid guid, Patient newPatient)
+    public async Task<Patient> Update(Guid guid, Patient newPatient)
     {
         var patient = await _context.Patients
             .FirstOrDefaultAsync(p => p.Guid == guid);

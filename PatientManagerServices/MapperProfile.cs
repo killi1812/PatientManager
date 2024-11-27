@@ -54,6 +54,19 @@ public class MapperProfile : Profile
 
         CreateMap<MedicalHistory, MedicalHistoryDto>()
             .ForMember(dest => dest.Guid, opt => opt.MapFrom(mh => mh.Guid.ToString()));
-        
+       
+        CreateMap<Prescription, Prescription>()
+            .ForMember(dest => dest.Guid, opt => opt.Ignore())
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            //TODO check if needs to be ignored  
+            .ForMember(dest => dest.MedicalHistory, opt => opt.Ignore())
+            .ForMember(dest => dest.MedicalHistoryId, opt => opt.Ignore())
+            .ForMember(dest => dest.Illness, opt => opt.Ignore())
+            .ForMember(dest => dest.IllnessId, opt => opt.Ignore());
+        CreateMap<Prescription, PrescriptionDto>()
+            .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid.ToString()));
+        CreateMap<PrescriptionDto, Prescription>()
+            .ForMember(dest => dest.Guid, opt => opt.Ignore())
+            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateOnly.Parse(src.Date)));
     }
 }

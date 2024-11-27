@@ -8,10 +8,10 @@ namespace PatientManagerServices.Services;
 public interface IIllnessService
 {
     public Task<List<Illness>> GetPatientIllnesses(Guid medicalHistoryGuid);
-    public Task<Illness> GetIllness(Guid guid);
-    public Task<Illness> CreateIllness(Guid medicalHistoryGuid, Illness illness);
-    public Task DeleteIllness(Guid guid);
-    public Task<Illness> UpdateIllness(Guid guid, Illness illness);
+    public Task<Illness> Get(Guid guid);
+    public Task<Illness> Create(Guid medicalHistoryGuid, Illness illness);
+    public Task Delete(Guid guid);
+    public Task<Illness> Update(Guid guid, Illness illness);
 }
 
 public class IllnessService : IIllnessService
@@ -28,7 +28,7 @@ public class IllnessService : IIllnessService
     public async Task<List<Illness>> GetPatientIllnesses(Guid medicalHistoryGuid)
     {
         var illnesses = await _context.MedicalHistories
-            . AsNoTracking()
+            .AsNoTracking()
             .Where(mh => mh.Guid == medicalHistoryGuid)
             .SelectMany(mh => mh.PastIlnesses)
             .Include(il => il.MedicalHistory)
@@ -40,7 +40,7 @@ public class IllnessService : IIllnessService
         return illnesses;
     }
     
-    public async Task<Illness> GetIllness(Guid guid)
+    public async Task<Illness> Get(Guid guid)
     {
         var illness = await _context.Illnesses
             .AsNoTracking()
@@ -52,7 +52,7 @@ public class IllnessService : IIllnessService
         return illness;
     }
 
-    public async Task<Illness> CreateIllness(Guid medicalHistoryGuid, Illness illness)
+    public async Task<Illness> Create(Guid medicalHistoryGuid, Illness illness)
     {
         var medicalHistory = await _context.MedicalHistories.FirstOrDefaultAsync(mh => mh.Guid == medicalHistoryGuid);
         if (medicalHistory == null)
@@ -66,7 +66,7 @@ public class IllnessService : IIllnessService
                throw new NotFoundException($"Illness with guid {illness.Guid} was not found");
     }
 
-    public async Task DeleteIllness(Guid guid)
+    public async Task Delete(Guid guid)
     {
         var illness = await _context.Illnesses .FirstOrDefaultAsync(i => i.Guid == guid);
         if (illness == null)
@@ -76,7 +76,7 @@ public class IllnessService : IIllnessService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<Illness> UpdateIllness(Guid guid, Illness newIllness)
+    public async Task<Illness> Update(Guid guid, Illness newIllness)
     {
         var illness = await _context.Illnesses.FirstOrDefaultAsync(i => i.Guid == guid);
         if (illness == null)
