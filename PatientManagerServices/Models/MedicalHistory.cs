@@ -8,4 +8,5 @@ public class MedicalHistory
     public Guid Guid { get; set; } = System.Guid.NewGuid();
     public List<Illness> PastIlnesses { get; set; }
     public List<Examination> Examinations { get; set; }
+    public List<Prescription> Prescriptions { get; set; }
 }
