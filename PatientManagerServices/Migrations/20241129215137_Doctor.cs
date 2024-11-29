@@ -16,15 +16,15 @@ namespace PatientManagerServices.Migrations
                 name: "DoctorId",
                 table: "Patients",
                 type: "integer",
-                nullable: false,
-                defaultValue: 0);
+                nullable: true);
 
             migrationBuilder.CreateTable(
-                name: "Doctor",
+                name: "Doctors",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                        .Annotation("Npgsql:ValueGenerationStrategy",
+                            NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Guid = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Surname = table.Column<string>(type: "text", nullable: false),
@@ -32,10 +32,7 @@ namespace PatientManagerServices.Migrations
                     Email = table.Column<string>(type: "text", nullable: false),
                     Phone = table.Column<string>(type: "text", nullable: false)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Doctor", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Doctors", x => x.Id); });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Patients_DoctorId",
@@ -43,23 +40,22 @@ namespace PatientManagerServices.Migrations
                 column: "DoctorId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Patients_Doctor_DoctorId",
+                name: "FK_Patients_Doctors_DoctorId",
                 table: "Patients",
                 column: "DoctorId",
-                principalTable: "Doctor",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalTable: "Doctors",
+                principalColumn: "Id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Patients_Doctor_DoctorId",
+                name: "FK_Patients_Doctors_DoctorId",
                 table: "Patients");
 
             migrationBuilder.DropTable(
-                name: "Doctor");
+                name: "Doctors");
 
             migrationBuilder.DropIndex(
                 name: "IX_Patients_DoctorId",

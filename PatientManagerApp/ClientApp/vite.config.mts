@@ -82,7 +82,7 @@ export default defineConfig({
       '/api': {
         target: target,
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        rewrite: (path) => path.replace(/^\/api/, '/api'),
         secure: false,
       },
       '/swagger': {

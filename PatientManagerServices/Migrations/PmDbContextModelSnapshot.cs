@@ -146,7 +146,6 @@ namespace PatientManagerServices.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("DoctorId")
-                        .IsRequired()
                         .HasColumnType("integer");
 
                     b.Property<Guid>("Guid")
@@ -247,9 +246,7 @@ namespace PatientManagerServices.Migrations
                 {
                     b.HasOne("PatientManagerServices.Models.Doctor", "Doctor")
                         .WithMany("Patients")
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DoctorId");
 
                     b.HasOne("PatientManagerServices.Models.MedicalHistory", "MedicalHistory")
                         .WithMany()

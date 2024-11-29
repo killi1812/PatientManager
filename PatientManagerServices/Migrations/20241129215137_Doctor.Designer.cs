@@ -12,8 +12,8 @@ using PatientManagerServices.Models;
 namespace PatientManagerServices.Migrations
 {
     [DbContext(typeof(PmDbContext))]
-    [Migration("20241129191009_DoctorNavigation")]
-    partial class DoctorNavigation
+    [Migration("20241129215137_Doctor")]
+    partial class Doctor
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -149,7 +149,6 @@ namespace PatientManagerServices.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("DoctorId")
-                        .IsRequired()
                         .HasColumnType("integer");
 
                     b.Property<Guid>("Guid")
@@ -250,9 +249,7 @@ namespace PatientManagerServices.Migrations
                 {
                     b.HasOne("PatientManagerServices.Models.Doctor", "Doctor")
                         .WithMany("Patients")
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DoctorId");
 
                     b.HasOne("PatientManagerServices.Models.MedicalHistory", "MedicalHistory")
                         .WithMany()

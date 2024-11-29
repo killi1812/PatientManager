@@ -1,4 +1,4 @@
-using PatientManagerServices.Migrations;
+using PatientManagerServices.Models;
 
 namespace PatientManagerServices.Services;
 
