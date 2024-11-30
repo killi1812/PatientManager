@@ -25,9 +25,10 @@ pnpm-debug.log*
 *.sw?
 
 .idea
-.old
-.swap
-.log
+*.old
+*.old/
+*.swap
+*.log
 appsettings.json
 
 # User-specific files
