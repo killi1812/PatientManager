@@ -1,16 +1,17 @@
 <template>
   <v-container class="login-container">
-    <v-form @submit.prevent="login">
+    <v-form @submit.prevent="loginUser">
       <v-text-field
-          v-model="username"
-          label="Username"
-          required
+        v-model="email"
+        label="email"
+        required
+        type="email"
       ></v-text-field>
       <v-text-field
-          v-model="password"
-          label="Password"
-          type="password"
-          required
+        v-model="password"
+        label="Password"
+        type="password"
+        required
       ></v-text-field>
       <v-btn type="submit" color="primary">Login</v-btn>
     </v-form>
@@ -19,14 +20,14 @@
 
 <script setup lang="ts">
 import {ref} from 'vue'
-import {Login} from "@/api/DoctorApi";
+import {login} from "@/api/DoctorApi";
 
-const username = ref('')
+const email = ref('')
 const password = ref('')
 
-const login = async () => {
+const loginUser = async () => {
   try {
-    const response = await Login(username.value, password.value)
+    const response = await login(email.value, password.value)
     console.log('Login successful:', response.data)
   } catch (error) {
     console.error('Login failed:', error)
