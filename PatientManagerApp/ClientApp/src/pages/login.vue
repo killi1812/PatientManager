@@ -13,7 +13,10 @@
         type="password"
         required
       ></v-text-field>
-      <v-btn type="submit" color="primary">Login</v-btn>
+      <div class="btn-container">
+        <v-btn type="submit" color="primary">Login</v-btn>
+        <v-btn type="button" color="primary" @click="router.push({name:'/register'})">Register</v-btn>
+      </div>
     </v-form>
   </v-container>
 </template>
@@ -26,14 +29,14 @@ import {useAuthStore} from "@/stores/auth";
 const email = ref('')
 const password = ref('')
 const authStore = useAuthStore()
-const routher = useRouter()
+const router = useRouter()
 
 const loginUser = async () => {
   try {
     const response = await login(email.value, password.value)
     console.log('Login successful:', response.data)
     authStore.setToken(response.data)
-    routher.replace({name: "/landingPage"})
+    router.replace({name: "/landingPage"})
   } catch (error) {
     console.error('Login failed:', error)
   }
@@ -41,6 +44,11 @@ const loginUser = async () => {
 </script>
 
 <style scoped>
+.btn-container{
+  display: flex;
+  justify-content: space-evenly;
+}
+
 .login-container {
   max-width: 400px;
   margin: 0 auto;

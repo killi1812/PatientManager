@@ -36,8 +36,10 @@
         type="password"
         required
       ></v-text-field>
-
-      <v-btn :disabled="!valid" @click="submit">Register</v-btn>
+<div class="btn-container">
+  <v-btn type="button" color="primary" @click="router.push({name:'/login'})">Login</v-btn>
+  <v-btn :disabled="!valid" @click="submit">Register</v-btn>
+</div>
     </v-form>
   </v-container>
 </template>
@@ -46,7 +48,7 @@
 import {ref} from 'vue'
 import type {NewDoctor} from '@/model/newDoctor'
 import {register} from "@/api/DoctorApi";
-
+const router = useRouter()
 const valid = ref(false)
 const doctor = ref<NewDoctor>({
   name: "",
@@ -92,8 +94,18 @@ const submit = async () => {
 </script>
 
 <style scoped>
+
+.btn-container{
+  display: flex;
+  justify-content: space-evenly;
+}
 .v-container {
-  max-width: 600px;
+  max-width: 400px;
   margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  height: calc(100vh - 40px);
 }
 </style>
