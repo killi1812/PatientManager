@@ -82,5 +82,9 @@ public class MapperProfile : Profile
         CreateMap<DoctorDetailsDto, Doctor>()
             .ForMember(dest => dest.Guid, opt => opt.Ignore())
             .ForMember(dest => dest.Patients, opt => opt.Ignore());
+
+        CreateMap<NewDoctorDto, Doctor>()
+            .ForMember(dest => dest.Guid, opt => opt.Ignore())
+            .ForMember(dest => dest.Password, opt => opt.Ignore());
     }
 } 

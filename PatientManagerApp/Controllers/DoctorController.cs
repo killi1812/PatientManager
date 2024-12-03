@@ -20,10 +20,10 @@ namespace PatientManagerApp.Controllers
         }
     //TODO test endpoints
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] DoctorDetailsDto doctorDto,[FromHeader] string password)
+        public async Task<IActionResult> Create([FromForm] NewDoctorDto doctorDto)
         {
             var doctor = _mapper.Map<Doctor>(doctorDto);
-            var createdDoctor = await _doctorService.Create(doctor, password);
+            var createdDoctor = await _doctorService.Create(doctor, doctorDto.Password);
             var dto = _mapper.Map<DoctorDto>(createdDoctor);
             return CreatedAtAction(nameof(Get), new { guid = createdDoctor.Guid }, dto);
         }

@@ -2,35 +2,35 @@
   <v-container>
     <v-form ref="form" v-model="valid" lazy-validation>
       <v-text-field
-        v-model="name"
+        v-model="doctor.name"
         :rules="nameRules"
         label="Name"
         required
       ></v-text-field>
 
       <v-text-field
-        v-model="surname"
+        v-model="doctor.surname"
         :rules="surnameRules"
         label="Surname"
         required
       ></v-text-field>
 
       <v-text-field
-        v-model="email"
+        v-model="doctor.email"
         :rules="emailRules"
         label="Email"
         required
       ></v-text-field>
 
       <v-text-field
-        v-model="phone"
+        v-model="doctor.phone"
         :rules="phoneRules"
         label="Phone"
         required
       ></v-text-field>
 
       <v-text-field
-        v-model="password"
+        v-model="doctor.password"
         :rules="passwordRules"
         label="Password"
         type="password"
@@ -43,14 +43,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import {ref} from 'vue'
+import type {NewDoctor} from '@/model/newDoctor'
+import {register} from "@/api/DoctorApi";
 
 const valid = ref(false)
-const name = ref('')
-const surname = ref('')
-const email = ref('')
-const phone = ref('')
-const password = ref('')
+const doctor = ref<NewDoctor>({
+  name: "",
+  surname: "",
+  email: "",
+  phone: "",
+  password: ""
+})
 
 const nameRules = [
   (v: string) => !!v || 'Name is required',
@@ -77,10 +81,12 @@ const passwordRules = [
   (v: string) => (v && v.length >= 6) || 'Password must be at least 6 characters',
 ]
 
-const submit = () => {
+const submit = async () => {
   if (valid.value) {
     // Handle form submission
-    console.log('Form submitted:', { name: name.value, surname: surname.value, email: email.value, phone: phone.value, password: password.value })
+    console.log('Form submitted:', doctor.value)
+    const rez = await register(doctor.value)
+    console.log(rez)
   }
 }
 </script>

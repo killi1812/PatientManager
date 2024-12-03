@@ -1,5 +1,5 @@
 // doctorDto.ts
-export class DoctorDetails {
+export interface DoctorDetails {
   guid: string;
   name: string;
   surname: string;

@@ -1,6 +1,6 @@
 import axios from "axios";
 import type {DoctorDetails} from "@/model/doctorDetails";
-import type {NewDoctor} from "@/model/Doctor";
+import type {NewDoctor} from "@/model/newDoctor";
 
 const baseUrl = "/api/doctor";
 
@@ -47,6 +47,12 @@ export const login = async (email: string, password: string) => {
   return response;
 };
 
-export const Register = async (doctor: NewDoctor) =>{
-  const rez = await axios.put
+export const register = async (doctor: NewDoctor) => {
+  const rez = await axios.post(`${baseUrl}`, {...doctor},
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  return (rez)
 }

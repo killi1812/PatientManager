@@ -10,9 +10,16 @@ import { setupLayouts } from 'virtual:generated-layouts'
 import { routes } from 'vue-router/auto-routes'
 import {useAuthStore} from "@/stores/auth";
 
+const unAuthorizedRoutes = ["/login","/register"]
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: setupLayouts(routes),
+  routes: setupLayouts(routes).map(route => {
+    if (!unAuthorizedRoutes.some(r => r == route.path)) {
+      route.meta = { requiresAuth: true }
+    }
+    return route
+  }),
 })
 
 router.beforeEach((to, from, next) => {

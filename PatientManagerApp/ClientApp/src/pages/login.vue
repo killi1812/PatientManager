@@ -21,14 +21,19 @@
 <script setup lang="ts">
 import {ref} from 'vue'
 import {login} from "@/api/DoctorApi";
+import {useAuthStore} from "@/stores/auth";
 
 const email = ref('')
 const password = ref('')
+const authStore = useAuthStore()
+const routher = useRouter()
 
 const loginUser = async () => {
   try {
     const response = await login(email.value, password.value)
     console.log('Login successful:', response.data)
+    authStore.setToken(response.data)
+    routher.replace({name: "/landingPage"})
   } catch (error) {
     console.error('Login failed:', error)
   }

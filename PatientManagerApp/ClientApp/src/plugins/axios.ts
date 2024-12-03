@@ -1,5 +1,6 @@
 // src/plugins/axios.ts
 import axios from 'axios'
+import {useAuthStore} from "@/stores/auth";
 
 const axiosInstance = axios.create({
   baseURL: '/api',
@@ -8,8 +9,12 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   config => {
-    // Ensure no infinite loop in request interceptor
-    return config
+    const authStore = useAuthStore()
+    const token = authStore.getToken()
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+      return config
   },
   error => {
     return Promise.reject(error)
