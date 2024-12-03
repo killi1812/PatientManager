@@ -1,6 +1,6 @@
 import axios from "axios";
 import type {DoctorDetails} from "@/model/doctorDetails";
-import type {NewDoctor} from "@/Model/Doctor";
+import type {NewDoctor} from "@/model/Doctor";
 
 const baseUrl = "/api/doctor";
 
