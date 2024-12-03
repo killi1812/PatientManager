@@ -1,20 +1,22 @@
 <template>
   <v-container class="login-container">
-    <v-form @submit.prevent="loginUser">
+    <v-form @submit.prevent="loginUser" v-model="valid">
       <v-text-field
         v-model="email"
         label="email"
         required
+        :rules="emailRules"
         type="email"
       ></v-text-field>
       <v-text-field
         v-model="password"
         label="Password"
+       :rules="passwordRules"
         type="password"
         required
       ></v-text-field>
       <div class="btn-container">
-        <v-btn type="submit" color="primary">Login</v-btn>
+        <v-btn type="submit" color="primary" :disabled="!valid">Login</v-btn>
         <v-btn type="button" color="primary" @click="router.push({name:'/register'})">Register</v-btn>
       </div>
     </v-form>
@@ -30,6 +32,7 @@ const email = ref('')
 const password = ref('')
 const authStore = useAuthStore()
 const router = useRouter()
+const valid = ref(false)
 
 const loginUser = async () => {
   try {
@@ -41,6 +44,16 @@ const loginUser = async () => {
     console.error('Login failed:', error)
   }
 }
+
+const emailRules = [
+  (v: string) => !!v || 'Email is required',
+  (v: string) => /.+@.+\..+/.test(v) || 'Email must be valid',
+]
+
+const passwordRules = [
+  (v: string) => !!v || 'Password is required',
+  (v: string) => (v && v.length >= 6) || 'Password must be at least 6 characters',
+]
 </script>
 
 <style scoped>

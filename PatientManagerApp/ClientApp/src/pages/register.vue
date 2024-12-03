@@ -38,7 +38,7 @@
       ></v-text-field>
 <div class="btn-container">
   <v-btn type="button" color="primary" @click="router.push({name:'/login'})">Login</v-btn>
-  <v-btn :disabled="!valid" @click="submit">Register</v-btn>
+  <v-btn type="submit" color="primary" :disabled="!valid" @click="submit">Register</v-btn>
 </div>
     </v-form>
   </v-container>
