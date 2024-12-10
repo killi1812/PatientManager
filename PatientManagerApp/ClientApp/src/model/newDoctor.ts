@@ -1,7 +1,7 @@
 export interface NewDoctor {
-  name: string ;
-  surname: string ;
-  email: string ;
-  phone: string ;
-  password: string ;
+  Name: string ;
+  Surname: string ;
+  Email: string ;
+  Phone: string ;
+  Password: string ;
 }

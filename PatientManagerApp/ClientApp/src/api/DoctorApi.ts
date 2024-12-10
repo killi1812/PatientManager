@@ -48,7 +48,7 @@ export const login = async (email: string, password: string) => {
 };
 
 export const register = async (doctor: NewDoctor) => {
-  const rez = await axios.post(`${baseUrl}`, {...doctor},
+  const rez = await axios.post(`${baseUrl}`, doctor,
     {
       headers: {
         'Content-Type': 'multipart/form-data'

@@ -72,7 +72,7 @@ public class DoctorService : IDoctorService
     public async Task<string> Login(string email, string password)
     {
         var doctor = await _context.Doctors.SingleOrDefaultAsync(d => d.Email == email);
-        if (doctor == null || !BCrypt.Net.BCrypt.Verify(doctor.Password, password))
+        if (doctor == null || !BCrypt.Net.BCrypt.Verify(password, doctor.Password))
             throw new UnauthorizedException("Invalid email or password");
 
         //TODO Generate and return a token or session identifier

@@ -1,36 +1,36 @@
 <template>
   <v-container>
-    <v-form ref="form" v-model="valid" lazy-validation>
+    <v-form v-model="valid" lazy-validation @submit.prevent="submitRegister">
       <v-text-field
-        v-model="doctor.name"
+        v-model="doctor.Name"
         :rules="nameRules"
         label="Name"
         required
       ></v-text-field>
 
       <v-text-field
-        v-model="doctor.surname"
+        v-model="doctor.Surname"
         :rules="surnameRules"
         label="Surname"
         required
       ></v-text-field>
 
       <v-text-field
-        v-model="doctor.email"
+        v-model="doctor.Email"
         :rules="emailRules"
         label="Email"
         required
       ></v-text-field>
 
       <v-text-field
-        v-model="doctor.phone"
+        v-model="doctor.Phone"
         :rules="phoneRules"
         label="Phone"
         required
       ></v-text-field>
 
       <v-text-field
-        v-model="doctor.password"
+        v-model="doctor.Password"
         :rules="passwordRules"
         label="Password"
         type="password"
@@ -38,7 +38,7 @@
       ></v-text-field>
 <div class="btn-container">
   <v-btn type="button" color="primary" @click="router.push({name:'/login'})">Login</v-btn>
-  <v-btn type="submit" color="primary" :disabled="!valid" @click="submit">Register</v-btn>
+  <v-btn type="submit" color="primary" :disabled="!valid">Register</v-btn>
 </div>
     </v-form>
   </v-container>
@@ -51,11 +51,11 @@ import {register} from "@/api/DoctorApi";
 const router = useRouter()
 const valid = ref(false)
 const doctor = ref<NewDoctor>({
-  name: "",
-  surname: "",
-  email: "",
-  phone: "",
-  password: ""
+  Name: "",
+  Surname: "",
+  Email: "",
+  Phone: "",
+  Password: ""
 })
 
 const nameRules = [
@@ -83,12 +83,17 @@ const passwordRules = [
   (v: string) => (v && v.length >= 6) || 'Password must be at least 6 characters',
 ]
 
-const submit = async () => {
+const submitRegister = async () => {
+  debugger;
   if (valid.value) {
-    // Handle form submission
     console.log('Form submitted:', doctor.value)
-    const rez = await register(doctor.value)
-    console.log(rez)
+    try{
+      const rez = await register(doctor.value)
+      console.log(rez)
+    }
+    catch (e) {
+     console.log(e)
+    }
   }
 }
 </script>
