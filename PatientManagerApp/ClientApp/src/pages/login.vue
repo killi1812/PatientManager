@@ -39,7 +39,7 @@ const loginUser = async () => {
     const response = await login(email.value, password.value)
     console.log('Login successful:', response.data)
     authStore.setToken(response.data)
-    router.replace({name: "/landingPage"})
+    await router.replace({name: "Home"})
   } catch (error) {
     console.error('Login failed:', error)
   }

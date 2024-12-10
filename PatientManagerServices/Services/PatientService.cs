@@ -31,19 +31,19 @@ public class PatientService : IPatientService
     {
         if (page < 1)
             throw new Exception("Page can't be less then 1");
-
+        
         IQueryable<Patient> qPatients = _context.Patients
             .AsNoTracking()
-            .OrderBy(p => p.Surname)
-            .ThenBy(p => p.Name);
+            .Include(p => p.MedicalHistory)
+            .OrderBy(p => p.NameNormalized);
     
         if (!String.IsNullOrEmpty(q))
         {
-            qPatients = qPatients.Where(p => p.Mbo.Contains(q));
-            if (!qPatients.Any())
-                //TODO debug this does not returns 0 results for some reason with query cvok 
+            var tmp = qPatients.Where(p => p.Mbo.Contains(q));
+            if (!tmp.Any())
                 qPatients = qPatients.Where(p => p.NameNormalized.Contains(q.ToLower()));
-                var list = qPatients.ToList();
+            else
+                qPatients = tmp;
         }
         return await qPatients
             .Skip(n * (page - 1))
