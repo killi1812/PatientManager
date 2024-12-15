@@ -32,13 +32,20 @@ const routes = [
     component: () => import('@/pages/register.vue'),
   },
   {
-    path: '/patient-details:guid',
+    path: '/patient-details/:guid',
     name: 'PatientDetails',
     component: () => import('@/pages/patientDetails.vue'),
     meta:{ requiresAuth: true, }
-  }
+  },
+  {
+    path: '/illness-details/:guid',
+    name: 'IllnessDetails',
+    component: () => import('@/pages/IlnessDetails.vue'),
+    meta:{ requiresAuth: true, }
+  },
 
- ]
+
+]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

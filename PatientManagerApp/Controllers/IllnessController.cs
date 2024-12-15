@@ -19,7 +19,7 @@ public class IllnessController : ControllerBase
     }
 
     [HttpGet("[action]/{guid}")]
-    public async Task<IActionResult> GetIlness([FromRoute] string guid)
+    public async Task<IActionResult> GetIllness([FromRoute] string guid)
     {
         var illness = await _illnessService.Get(Guid.Parse(guid));
         var dto = _mapper.Map<IllnessDto>(illness);
@@ -27,7 +27,7 @@ public class IllnessController : ControllerBase
     }
 
     [HttpGet("[action]/{medicalHistoryGuid}")]
-    public async Task<IActionResult> GetIlnessesForPatients([FromRoute] string medicalHistoryGuid)
+    public async Task<IActionResult> GetIllnessesForPatients([FromRoute] string medicalHistoryGuid)
     {
         var illnesses = await _illnessService.GetPatientIllnesses(Guid.Parse(medicalHistoryGuid));
         var dtos = _mapper.Map<List<IllnessDto>>(illnesses);

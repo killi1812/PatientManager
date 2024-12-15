@@ -2,50 +2,58 @@
 import {ref, onMounted} from 'vue';
 import {useRoute} from 'vue-router';
 import {getPatient} from '@/api/PatientApi';
-import type {Patient} from '@/model/patient';
-import {getAllExaminations} from "@/api/ExaminationApi";
+import type {Illness} from "@/model/illness";
+import {getExaminationForIllness} from "@/api/ExaminationApi";
 import type {Examination} from "@/model/examination";
+import {getIllness} from "@/api/IllnessApi";
 
 const route = useRoute();
-const patient = ref<Patient | undefined>(undefined);
+const illness = ref<Illness | undefined>(undefined);
 const examinations = ref<Examination[]>([]);
 
-const fetchPatientDetails = async () => {
+const fetchIllnessDetails = async () => {
   const guid = route.params['guid'] as string;
-  const response = await getPatient(guid);
-  patient.value = response.data;
+  const response = await getIllness(guid);
+  illness.value = response.data;
 };
 
-watch([patient],() => {
-  if (patient.value) {
+watch([illness], () => {
+  if (illness.value) {
     fetchExaminations()
   }
 }, {immediate: true, deep: true})
 
 const fetchExaminations = async () => {
-  if (!patient.value) {
+  if (!illness.value) {
     return
   }
-  const response = await getAllExaminations(patient.value.medicalHistoryGuid)
+  const response = await getExaminationForIllness(illness.value.guid)
   examinations.value = response.data
 }
 
 onMounted(() => {
-  fetchPatientDetails();
+  fetchIllnessDetails();
 });
 </script>
 
 <template>
-  <v-container v-if="patient">
+  <v-container v-if="illness">
     <v-row>
       <v-col cols="12">
-        <h1>{{ patient.name }} {{ patient.surname }}</h1>
-        <p>MBO: {{ patient.mbo }}</p>
+        <h1>{{ illness.name }}</h1>
+        <p>Start: {{illness.start}}</p>
+        <p v-if="illness.end">End: {{illness.end}}</p>
+        <p v-else>Ongoing</p>
+      </v-col>
+      <v-col cols="12" style="display: flex; gap: 1rem;">
+        <v-btn v-if="!illness.end" color="Primary">Stop</v-btn>
+        <v-btn color="Info">Edit</v-btn>
+        <v-btn color="danger">Delete</v-btn>
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="12">
-        <IllnessList :medicalHistoryGuid="patient.medicalHistoryGuid" :height="500"/>
+        <PrescriptionList :prescriptions="illness.prescriptions" :height="500"/>
       </v-col>
     </v-row>
     <v-row>

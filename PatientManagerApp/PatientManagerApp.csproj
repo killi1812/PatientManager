@@ -40,6 +40,12 @@
       <Folder Include="ClientApp\src\dto\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="ClientApp.old\package-lock.json" />
+      <_ContentIncludedByDefault Remove="ClientApp.old\package.json" />
+      <_ContentIncludedByDefault Remove="ClientApp.old\public\manifest.json" />
+    </ItemGroup>
+
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
         <!-- Ensure Node.js is installed -->
         <Exec Command="node --version" ContinueOnError="true">

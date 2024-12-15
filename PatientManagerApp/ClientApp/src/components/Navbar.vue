@@ -3,7 +3,6 @@
     <v-toolbar-title>
       <v-btn  to="/examinations">Upcoming Examinations</v-btn>
       <v-btn  to="/patients">Your Patients</v-btn>
-      <v-btn  to="/searchPatient">Search a Patient</v-btn>
       <v-btn  to="/register-patient">Register a Patient</v-btn>
     </v-toolbar-title>
 
@@ -28,7 +27,7 @@ const username = authStore.username
 
 const logout = () => {
   authStore.logout()
-  router.replace({name: 'Login'})
+  router.replace({path: '/login'})
   // Redirect to login page or perform other logout actions
 }
 </script>
