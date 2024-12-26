@@ -1,5 +1,11 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using PatientManagerServices.Extras;
 using PatientManagerServices.Models;
 
@@ -18,11 +24,13 @@ public class DoctorService : IDoctorService
 {
     private readonly PmDbContext _context;
     private readonly IMapper _mapper;
+    private readonly IConfiguration _configuration; 
 
-    public DoctorService(PmDbContext context, IMapper mapper)
+    public DoctorService(PmDbContext context, IMapper mapper,IServiceProvider serviceProvider)
     {
         _context = context;
         _mapper = mapper;
+        _configuration = serviceProvider.GetRequiredService<IConfiguration>();
     }
 
     public async Task<Doctor> Create(Doctor doctor, string password)
@@ -71,11 +79,27 @@ public class DoctorService : IDoctorService
 
     public async Task<string> Login(string email, string password)
     {
-        var doctor = await _context.Doctors.SingleOrDefaultAsync(d => d.Email == email);
-        if (doctor == null || !BCrypt.Net.BCrypt.Verify(password, doctor.Password))
-            throw new UnauthorizedException("Invalid email or password");
+        var doctor = await _context.Doctors.FirstOrDefaultAsync(u => u.Email == email);
+        if (doctor == null)
+            throw new NotFoundException($"Doctor with email {email} not found");
 
-        //TODO Generate and return a token or session identifier
-        return "token"; // Replace with actual token generation logic
+        var result = BCrypt.Net.BCrypt.Verify(password, doctor.Password);
+        if (!result)
+            throw new UnauthorizedException($"Wrong password for doctor: {email}");
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        byte[] key = Encoding.ASCII.GetBytes(_configuration["key"]);
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new Claim[]
+            {
+                new("guid", doctor.Guid.ToString())
+            }),
+            Expires = DateTime.UtcNow.AddDays(7),
+            SigningCredentials =
+                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(token);
     }
 }

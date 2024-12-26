@@ -1,5 +1,7 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
+using Microsoft.IdentityModel.Tokens;
 using PatientManagerServices;
 using PatientManagerServices.Models;
 using PatientManagerServices.Services;
@@ -9,6 +11,21 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAutoMapper(typeof(MapperProfile));
 var conf = builder.Configuration;
 builder.Services.AddDbContext<PmDbContext>(o => o.UseNpgsql(conf.GetConnectionString("Default")));
+
+string keyb = builder.Configuration["key"];
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(o =>
+    {
+        byte[] key = Encoding.UTF8.GetBytes(keyb);
+        o.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key)
+        };
+    });
+
 
 builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IIllnessService, IllnessService>();
