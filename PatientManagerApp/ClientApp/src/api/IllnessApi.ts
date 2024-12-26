@@ -1,5 +1,6 @@
 import axios from "@/plugins/axios";
 import type { Illness } from '@/model/illness';
+import { mapForm } from '@/helpers/formHelpers';
 
 const baseUrl = '/Illness';
 
@@ -16,9 +17,7 @@ export const createIllness = async (medicalHistoryGuid: string, illnessDto: Illn
 };
 
 export const updateIllness = async (guid: string, illnessDto: Illness) => {
-  const formData = new FormData();
-  formData.append('illnessDto', JSON.stringify(illnessDto));
-
+  const formData = mapForm(illnessDto);
   const response = await axios.put(`${baseUrl}/UpdateIllness/${guid}`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',

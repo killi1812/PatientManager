@@ -43,6 +43,12 @@ const routes = [
     component: () => import('@/pages/IlnessDetails.vue'),
     meta:{ requiresAuth: true, }
   },
+  {
+  path: '/examination-details/:guid',
+  name: 'ExaminationDetails',
+  component: () => import('@/pages/ExaminationDetails.vue'),
+  meta:{ requiresAuth: true, }
+},
 
 
 ]

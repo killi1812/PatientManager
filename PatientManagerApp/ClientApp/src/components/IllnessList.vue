@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 
-import {endIllness, getIllnessesForPatient} from "@/api/IllnessApi";
+import {createIllness, endIllness, getIllnessesForPatient, updateIllness} from "@/api/IllnessApi";
 import type {Illness} from "@/model/illness";
+import IlnessDetails from "@/pages/IlnessDetails.vue";
 
 const props = defineProps({
   medicalHistoryGuid: {
@@ -10,12 +11,23 @@ const props = defineProps({
   },
   height: Number,
 })
+
+const defaultItem = {
+  guid: '',
+  name: '',
+  start: '',
+  end: undefined,
+  prescriptions: [],
+} as Illness
+
 const illnessList = ref<Illness[]>([])
 const editedIndex = ref(-1)
-const editedItem = ref<Illness | undefined>(undefined)
+const editedItem = ref<Illness>(defaultItem)
 const dialog = ref(false)
 const dialogDelete = ref(false)
+const formTitle = ref('')
 const router = useRouter()
+
 
 const headers = [
   {title: 'Name', key: 'name'},
@@ -39,8 +51,40 @@ const deleteItem = (item: Illness) => {
   editedItem.value = Object.assign({}, item)
   dialogDelete.value = true
 }
+const close = () => {
+  dialog.value = false
+  nextTick(() => {
+    editedItem.value = Object.assign({}, defaultItem)
+    editedIndex.value = -1
+  })
+}
+
+const closeDelete = () => {
+  dialogDelete.value = false
+  nextTick(() => {
+    editedItem.value = Object.assign({}, defaultItem)
+    editedIndex.value = -1
+  })
+}
+const deleteItemConfirm = () => {
+  illnessList.value.splice(editedIndex.value, 1)
+  //TODO add actual delete and refetch
+  closeDelete()
+}
+
+const save = async () => {
+  if (editedIndex.value > -1) {
+    //TODO update doens't map propperly
+    await updateIllness(editedItem.value.guid, editedItem.value)
+  } else {
+    await createIllness(props.medicalHistoryGuid, editedItem.value)
+  }
+  await fetchIllnessList()
+  close()
+}
 
 const search = (item: Illness) => {
+  //@ts-ignore
   router.push({name: 'IllnessDetails', params: {guid: item.guid}})
 }
 const stop = async (item: Illness) => {
@@ -68,7 +112,74 @@ onMounted(() => {
         <v-toolbar-title>Illnesses</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
-        <v-btn color="primary" @click="dialog = true">Add Illness</v-btn>
+        <v-dialog v-model="dialog" max-width="500px">
+          <template v-slot:activator="{ props }">
+            <v-btn color="primary" @click="dialog = true" v-bind:props>Add Illness</v-btn>
+          </template>
+          <v-card>
+            <v-card-title>
+              <span class="text-h5">{{ formTitle }}</span>
+            </v-card-title>
+
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols="12" md="4" sm="6">
+                    <v-text-field
+                      v-model="editedItem.name"
+                      label="Illness name"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="4" sm="6">
+                    <v-text-field
+                      v-model="editedItem.start"
+                      label="Start date"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="4" sm="6">
+                    <v-text-field
+                      v-model="editedItem.end"
+                      label="Illness end date"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue-darken-1" variant="text" @click="close">
+                Cancel
+              </v-btn>
+              <v-btn color="blue-darken-1" variant="text" @click="save">
+                Save
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <v-dialog v-model="dialogDelete" max-width="500px">
+          <v-card>
+            <v-card-title class="text-h5"
+            >Are you sure you want to delete this item?
+            </v-card-title
+            >
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue-darken-1" variant="text" @click="closeDelete"
+              >Cancel
+              </v-btn
+              >
+              <v-btn
+                color="blue-darken-1"
+                variant="text"
+                @click="deleteItemConfirm"
+              >OK
+              </v-btn
+              >
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-toolbar>
     </template>
 

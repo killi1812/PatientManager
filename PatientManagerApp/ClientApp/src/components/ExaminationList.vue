@@ -13,6 +13,7 @@ const props = defineProps({
   height: Number,
 })
 
+const router = useRouter()
 const editedIndex = ref(-1)
 const editedItem = ref<Examination | undefined>(undefined)
 const dialog = ref(false)
@@ -40,6 +41,11 @@ const deleteItem = (item: Examination) => {
   editedIndex.value = props.examinations.indexOf(item)
   editedItem.value = Object.assign({}, item)
   dialogDelete.value = true
+}
+
+const search = (item: Examination) => {
+  //@ts-ignore
+  router.push({name: 'ExaminationDetails', params: {guid: item.guid}})
 }
 
 </script>

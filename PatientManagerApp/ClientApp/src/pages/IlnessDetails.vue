@@ -12,6 +12,7 @@ const illness = ref<Illness | undefined>(undefined);
 const examinations = ref<Examination[]>([]);
 
 const fetchIllnessDetails = async () => {
+  // @ts-ignore
   const guid = route.params['guid'] as string;
   const response = await getIllness(guid);
   illness.value = response.data;
