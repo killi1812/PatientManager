@@ -37,7 +37,6 @@ const valid = ref(false)
 const loginUser = async () => {
   try {
     const response = await login(email.value, password.value)
-    console.log('Login successful:', response.data)
     authStore.setToken(response.data.token)
     await router.replace({name: "Home"})
   } catch (error) {
