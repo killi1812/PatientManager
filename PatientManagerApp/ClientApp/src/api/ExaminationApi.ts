@@ -1,7 +1,7 @@
-import axios from 'axios';
+import axios from "@/plugins/axios";
 import type { Examination } from '@/model/examination';
 
-const baseUrl = '/api/examination';
+const baseUrl = '/examination';
 
 export const createExamination = async (examinationDto: Examination) => {
   const formData = new FormData();

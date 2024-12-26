@@ -1,7 +1,7 @@
-import axios from 'axios';
+import axios from "@/plugins/axios";
 import type { Patient } from '@/model/patient';
 
-const baseUrl = '/api/patient';
+const baseUrl = '/patient';
 
 export const createPatient = async (patientDto: Patient) => {
   const formData = new FormData();

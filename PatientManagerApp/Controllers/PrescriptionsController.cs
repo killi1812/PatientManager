@@ -3,9 +3,11 @@ using PatientManagerServices.Dtos;
 using PatientManagerServices.Services;
 using PatientManagerServices.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PatientManagerApp.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class PrescriptionsController : ControllerBase

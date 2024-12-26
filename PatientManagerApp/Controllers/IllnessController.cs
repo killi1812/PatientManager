@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PatientManagerServices.Dtos;
 using PatientManagerServices.Models;
@@ -6,6 +7,8 @@ using PatientManagerServices.Services;
 
 namespace PatientManagerApp.Controllers;
 
+[Authorize]
+[ApiController]
 [Route("api/[controller]")]
 public class IllnessController : ControllerBase
 {

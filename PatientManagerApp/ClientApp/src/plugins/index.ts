@@ -11,10 +11,11 @@ import router from '../router'
 
 // Types
 import type { App } from 'vue'
-import axios from "axios";
+import axiosInstance from "@/plugins/axios";
 
 export function registerPlugins (app: App) {
   app
+    .use(axiosInstance)
     .use(vuetify)
     .use(router)
     .use(pinia)

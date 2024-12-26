@@ -11,20 +11,11 @@ axiosInstance.interceptors.request.use(
   config => {
     const authStore = useAuthStore()
     const token = authStore.getToken()
+    console.log(token)
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
       return config
-  },
-  error => {
-    return Promise.reject(error)
-  }
-)
-
-axiosInstance.interceptors.response.use(
-  response => {
-    // Ensure no infinite loop in response interceptor
-    return response
   },
   error => {
     return Promise.reject(error)
