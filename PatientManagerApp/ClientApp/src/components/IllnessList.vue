@@ -2,7 +2,6 @@
 
 import {createIllness, deleteIllness, endIllness, getIllnessesForPatient, updateIllness} from "@/api/IllnessApi";
 import type {Illness} from "@/model/illness";
-import IlnessDetails from "@/pages/IlnessDetails.vue";
 
 const props = defineProps({
   medicalHistoryGuid: {
@@ -66,6 +65,7 @@ const closeDelete = () => {
     editedIndex.value = -1
   })
 }
+
 const deleteItemConfirm =async (guid : string) => {
   await deleteIllness(editedItem.value.guid)
   await fetchIllnessList()
