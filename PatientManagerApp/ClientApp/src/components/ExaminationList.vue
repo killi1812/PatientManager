@@ -125,10 +125,14 @@ const search = (item: Examination) => {
         </td>
       </tr>
     </template>
-    <template v-slot:item.actions="{ item }">
-      <v-icon size="large" @click="search(item)"> mdi-magnify</v-icon>
-      <v-icon class="me-2" size="small" @click="editItem(item)"> mdi-pencil</v-icon>
-      <v-icon size="large" @click="deleteItem(item)"> mdi-delete</v-icon>
+    <template v-slot:item="{ item }">
+      <tr @click="search(item)">
+        <td>{{ item.type }}</td>
+        <td>{{ item.examinationTime }}</td>
+        <td>
+          <v-icon size="large" @click.stop="search(item)">mdi-magnify</v-icon>
+        </td>
+      </tr>
     </template>
   </v-data-table-virtual>
 </template>
