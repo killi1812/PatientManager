@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 
-import {createIllness, endIllness, getIllnessesForPatient, updateIllness} from "@/api/IllnessApi";
+import {createIllness, deleteIllness, endIllness, getIllnessesForPatient, updateIllness} from "@/api/IllnessApi";
 import type {Illness} from "@/model/illness";
 import IlnessDetails from "@/pages/IlnessDetails.vue";
 
@@ -66,9 +66,9 @@ const closeDelete = () => {
     editedIndex.value = -1
   })
 }
-const deleteItemConfirm = () => {
-  illnessList.value.splice(editedIndex.value, 1)
-  //TODO add actual delete and refetch
+const deleteItemConfirm =async (guid : string) => {
+  await deleteIllness(editedItem.value.guid)
+  await fetchIllnessList()
   closeDelete()
 }
 
@@ -184,8 +184,9 @@ onMounted(() => {
     </template>
 
     <template v-slot:item.actions="{ item }">
+      <v-icon v-if="item.end == undefined" size="large" @click="stop(item)"> mdi-stop</v-icon>
+      <v-icon v-else></v-icon>
       <v-icon size="large" @click="search(item)"> mdi-magnify</v-icon>
-      <v-icon size="large" @click="stop(item)"> mdi-stop</v-icon>
       <v-icon class="me-2" size="small" @click="editItem(item)"> mdi-pencil</v-icon>
       <v-icon size="large" @click="deleteItem(item)"> mdi-delete</v-icon>
     </template>

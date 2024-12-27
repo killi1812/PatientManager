@@ -64,9 +64,9 @@ public class IllnessController : ControllerBase
     [HttpPut("[action]/{guid}")]
     public async Task<IActionResult> EndIllness([FromRoute] string guid)
     {
-        throw new NotImplementedException();
         var illness = await _illnessService.Get(Guid.Parse(guid));
-        var dto = _mapper.Map<IllnessDto>(illness);
-        return Ok(dto);
+        illness.End = DateOnly.Parse(DateTime.Now.ToLongDateString());
+        await _illnessService.Update(Guid.Parse(guid), illness);
+        return Ok();
     }
 }
