@@ -1,25 +1,30 @@
 <script lang="ts" setup>
 
-import {deleteExamination} from "@/api/ExaminationApi";
+import {createExamination} from "@/api/ExaminationApi";
 import type {Examination} from "@/model/examination";
+import type {NewExaminationDto} from "@/dto/newExaminationDto";
 
 const props = defineProps({
   examinations: {
     type: Array<Examination>,
     required: true,
   },
+  medicalHistoryGuid:{
+    type: String,
+    required: true,
+  },
   height: Number,
 })
 
-const defaultItem: Examination = {
+const defaultItem: NewExaminationDto = {
   examinationTime: "",
-  guid: "",
-  illness: [],
+  illnessGuid: undefined,
+  medicalHistoryGuid: props.medicalHistoryGuid,
   type: 0
-} as Examination
+}
 const router = useRouter()
 const editedIndex = ref(-1)
-const editedItem = ref<Examination>(defaultItem)
+const editedItem = ref<NewExaminationDto>(defaultItem)
 const dialog = ref(false)
 const dialogDelete = ref(false)
 const activeGroupBy = ref([])
@@ -34,19 +39,6 @@ const headers = [
   {title: 'Actions', key: 'actions', sortable: false},
 ]
 
-
-const editItem = (item: Examination) => {
-  editedIndex.value = props.examinations.indexOf(item)
-  editedItem.value = Object.assign({}, item)
-  dialog.value = true
-}
-
-const deleteItem = (item: Examination) => {
-  editedIndex.value = props.examinations.indexOf(item)
-  editedItem.value = Object.assign({}, item)
-  dialogDelete.value = true
-}
-
 const closeDelete = () => {
   dialogDelete.value = false
   nextTick(() => {
@@ -55,11 +47,8 @@ const closeDelete = () => {
   })
 }
 
-const deleteItemConfirm = async (guid: string) => {
-  await deleteExamination(editedItem.value.guid)
-  //TODO: if there is a delete there then i  can't just send whole array but rather refetch it everytime delete happens
-  //props.examinations = props.examinations.filter(e => e.guid !== editedItem.value.guid)
-  closeDelete()
+const save = async () => {
+  await createExamination(editedItem.value)
 }
 
 const search = (item: Examination) => {
@@ -83,30 +72,50 @@ const search = (item: Examination) => {
         <v-toolbar-title>Examinations</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
-        <v-btn color="primary" @click="activeGroupBy = [groupByType!]">Group by type
-        </v-btn>
+        <v-btn color="primary" @click="activeGroupBy = [groupByType!]">Group by type</v-btn>
         <v-btn color="primary" @click="activeGroupBy=[]">Clear group by</v-btn>
-        <v-btn color="primary" @click="dialog = true">Add Examination</v-btn>
-        <v-dialog v-model="dialogDelete" max-width="500px">
+        <v-dialog v-model="dialog" max-width="500px">
+          <template v-slot:activator="{ props }">
+            <v-btn color="primary" @click="dialog = true" v-bind:props>Add Examination</v-btn>
+          </template>
           <v-card>
-            <v-card-title class="text-h5"
-            >Are you sure you want to delete this item?
-            </v-card-title
-            >
+            <v-card-title>
+              <span class="text-h5">Add new Examination</span>
+            </v-card-title>
+
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols="12" md="4" sm="6">
+                    <v-text-field
+                      v-model="editedItem.type"
+                      label="Examinaiton type"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="8" sm="6">
+                    <v-text-field
+                      v-model="editedItem.examinationTime"
+                      label="Examination time"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="8" sm="6">
+                    <v-text-field
+                      v-model="editedItem.illnessGuid"
+                      label="Examination for Illness"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue-darken-1" variant="text" @click="closeDelete"
-              >Cancel
-              </v-btn
-              >
-              <v-btn
-                color="blue-darken-1"
-                variant="text"
-                @click="deleteItemConfirm"
-              >OK
-              </v-btn
-              >
-              <v-spacer></v-spacer>
+              <v-btn color="blue-darken-1" variant="text" @click="dialog = false">
+                Cancel
+              </v-btn>
+              <v-btn color="blue-darken-1" variant="text" @click="save">
+                Save
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>

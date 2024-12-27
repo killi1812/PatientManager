@@ -2,8 +2,8 @@
 import {ref, onMounted} from 'vue';
 import {useRoute} from 'vue-router';
 import {getPatient} from '@/api/PatientApi';
-import type {Patient} from '@/model/patient';
 import {getAllExaminations} from "@/api/ExaminationApi";
+import type {Patient} from '@/model/patient';
 import type {Examination} from "@/model/examination";
 
 const route = useRoute();
@@ -11,6 +11,7 @@ const patient = ref<Patient | undefined>(undefined);
 const examinations = ref<Examination[]>([]);
 
 const fetchPatientDetails = async () => {
+  //@ts-ignore
   const guid = route.params['guid'] as string;
   const response = await getPatient(guid);
   patient.value = response.data;
@@ -50,7 +51,7 @@ onMounted(() => {
     </v-row>
     <v-row>
       <v-col cols="12">
-        <ExaminationList :examinations="examinations" :height="500"/>
+        <ExaminationList  :medicalHistoryGuid="patient.medicalHistoryGuid" :examinations="examinations" :height="500"/>
       </v-col>
     </v-row>
 

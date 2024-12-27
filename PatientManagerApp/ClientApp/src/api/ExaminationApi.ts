@@ -1,11 +1,12 @@
 import axios from "@/plugins/axios";
 import type { Examination } from '@/model/examination';
+import type {NewExaminationDto} from "@/dto/newExaminationDto";
+import {mapForm} from "@/helpers/formHelpers";
 
 const baseUrl = '/examination';
 
-export const createExamination = async (examinationDto: Examination) => {
-  const formData = new FormData();
-  formData.append('examinationDto', JSON.stringify(examinationDto));
+export const createExamination = async (examinationDto: NewExaminationDto) => {
+  const formData = mapForm(examinationDto)
 
   const response = await axios.post(`${baseUrl}/CreateExamination`, formData, {
     headers: {
