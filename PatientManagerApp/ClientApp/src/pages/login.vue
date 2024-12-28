@@ -38,6 +38,7 @@ const loginUser = async () => {
   try {
     const response = await login(email.value, password.value)
     authStore.setToken(response.data.token)
+    authStore.setUsername(email.value)
     //@ts-ignore
     await router.replace({name: "Home"})
   } catch (error) {

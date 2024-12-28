@@ -62,7 +62,7 @@ public class ExaminationController : ControllerBase
     }
 
     [HttpPut("{guid}")]
-    public async Task<ExaminationDto> UpdateExaminations([FromRoute] string guid, [FromForm] NewExaminationDto dto)
+    public async Task<ExaminationDto> UpdateExaminations([FromRoute] string guid, [FromForm] ExaminationDto dto)
     {
         var ex = await _examinationService.Update(Guid.Parse(guid), dto);
         var exDto = _mapper.Map<ExaminationDto>(ex);

@@ -17,8 +17,7 @@ export const createExamination = async (examinationDto: NewExaminationDto) => {
 };
 
 export const updateExamination = async (guid: string, examinationDto: Examination) => {
-  const formData = new FormData();
-  formData.append('examinationDto', JSON.stringify(examinationDto));
+  const formData = mapForm(examinationDto)
 
   const response = await axios.put(`${baseUrl}/${guid}`, formData, {
     headers: {

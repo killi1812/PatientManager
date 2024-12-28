@@ -1,18 +1,10 @@
 <template>
   <v-app-bar app>
-    <v-toolbar-title>
-      <v-btn  to="/examinations">Upcoming Examinations</v-btn>
-      <v-btn  to="/patients">Your Patients</v-btn>
-      <v-btn  to="/register-patient">Register a Patient</v-btn>
-    </v-toolbar-title>
-
-
+    <v-btn to="/examinations">Upcoming Examinations</v-btn>
+    <v-btn to="/patients">Your Patients</v-btn>
+    <v-btn to="/register-patient">Register a Patient</v-btn>
     <v-spacer></v-spacer>
-
-    <v-toolbar-title>
-      {{ username }}
-    </v-toolbar-title>
-
+    {{ username }}
     <v-btn @click="logout">Logout</v-btn>
   </v-app-bar>
 </template>
@@ -28,7 +20,6 @@ const username = authStore.username
 const logout = () => {
   authStore.logout()
   router.replace({path: '/login'})
-  // Redirect to login page or perform other logout actions
 }
 </script>
 

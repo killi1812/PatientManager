@@ -1,7 +1,7 @@
 using AutoMapper;
 using PatientManagerServices.Dtos;
+using PatientManagerServices.Enums;
 using PatientManagerServices.Models;
-using PatientManagerServices.Models.Enums;
 
 namespace PatientManagerServices;
 
@@ -41,7 +41,9 @@ public class MapperProfile : Profile
 
         CreateMap<Examination, Examination>()
             .ForMember(dest => dest.Guid, opt => opt.Ignore())
-            .ForMember(dest => dest.Id, opt => opt.Ignore());
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.MedicalHistory, opt => opt.Ignore())
+            .ForMember(dest => dest.MedicalHistoryId, opt => opt.Ignore());
         CreateMap<Examination,ExaminationDto>()
             .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid.ToString()));
         CreateMap<ExaminationDto, Examination>()

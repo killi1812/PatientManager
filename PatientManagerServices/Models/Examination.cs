@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using PatientManagerServices.Models.Enums;
+using PatientManagerServices.Enums;
 
 namespace PatientManagerServices.Models;
 

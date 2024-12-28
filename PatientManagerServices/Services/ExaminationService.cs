@@ -10,7 +10,7 @@ public interface IExaminationService
 {
     Task<Examination> Create(Guid medicalHistoryGuid, Guid? illnesGuid, Examination newExamination);
     Task<Examination> Get(Guid guid);
-    Task<Examination> Update(Guid guid, NewExaminationDto newExamination);
+    Task<Examination> Update(Guid guid, ExaminationDto newExamination);
     Task Delete(Guid guid);
     Task<List<Examination>> GetForIllness(Guid illnessGuid);
     Task<List<Examination>> GetAll(Guid medicalHistoryGuid);
@@ -65,31 +65,13 @@ public class ExaminationService : IExaminationService
         return examination;
     }
 
-    public async Task<Examination> Update(Guid guid, NewExaminationDto newExamination)
+    public async Task<Examination> Update(Guid guid, ExaminationDto newExamination)
     {
         var examination = await _context.Examinations.FirstOrDefaultAsync(e => e.Guid == guid);
         if (examination == null)
             throw new NotFoundException($"examination with guid: {guid} not found");
 
-        examination = _mapper.Map(newExamination, examination);
-
-        var medicalHistory =
-            await _context.MedicalHistories.FirstOrDefaultAsync(mh =>
-                mh.Guid == Guid.Parse(newExamination.MedicalHistoryGuid));
-        if (medicalHistory == null)
-            throw new NotFoundException($"Medical history with guid {newExamination.MedicalHistoryGuid} was not found");
-
-        examination.MedicalHistoryId = medicalHistory.Id;
-
-        if (newExamination.IllnessGuid != null)
-        {
-            var illness = await _context.Illnesses.FirstOrDefaultAsync(i => i.Guid == Guid.Parse(newExamination.IllnessGuid));
-            if (illness == null)
-                throw new NotFoundException($"Illness with guid {guid} was not found");
-
-            examination.IllnessId = illness.Id;
-        }
-        
+        _mapper.Map(newExamination, examination);
         await _context.SaveChangesAsync();
         
         return await _context.Examinations.FirstOrDefaultAsync(e => e.Guid == guid)

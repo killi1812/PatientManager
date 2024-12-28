@@ -1,4 +1,4 @@
-namespace PatientManagerServices.Models.Enums;
+namespace PatientManagerServices.Enums;
 
 /// <summary>
 /// Represents different types of medical examinations.

@@ -1,14 +1,16 @@
 <script lang="ts" setup>
 import {ref, onMounted} from 'vue';
 import {useRoute} from 'vue-router';
-import {deleteExamination, getExamination} from "@/api/ExaminationApi";
+import {deleteExamination, getExamination, updateExamination} from "@/api/ExaminationApi";
 import type {Examination} from "@/model/examination";
 import {ExaminationTypeProps, ExaminationTypeText} from "@/enums/ExaminationType";
+import type {Illness} from "@/model/illness";
 
 const route = useRoute();
 const router = useRouter();
 const examination = ref<Examination | undefined>(undefined);
 const dialogDelete = ref(false)
+const Editing = ref(false)
 
 const fetchDetails = async () => {
   // @ts-ignore
@@ -30,6 +32,18 @@ const deleteItemConfirm = async () => {
   router.back();
 }
 
+const save = async () => {
+  if (!examination.value)
+    return
+
+  const rez = await updateExamination(examination.value?.guid!, examination.value);
+  if (rez.status !== 200) {
+    console.log(rez)
+    return
+  }
+  Editing.value = false
+}
+
 onMounted(() => {
   fetchDetails();
 });
@@ -38,15 +52,29 @@ onMounted(() => {
 <template>
   <v-container v-if="examination">
     <v-row>
-      <v-col cols="12">
+      <v-col cols="12" v-if="!Editing">
         <h1>{{ ExaminationTypeText(examination.type) }}</h1>
         <p>Start: {{ examination.examinationTime }}</p>
       </v-col>
-      <v-col cols="12">
-        <v-select :items="ExaminationTypeProps"/>
-      </v-col>
+        <div v-else style="width: 50%">
+          <v-col cols="12" md="4" sm="6">
+            <v-select
+              v-model="examination.type"
+              label="Examinaiton type"
+              :items="ExaminationTypeProps"
+            />
+          </v-col>
+          <v-col cols="12" md="8" sm="6">
+            <v-text-field
+              v-model="examination.examinationTime"
+              label="Examination time"
+            ></v-text-field>
+          </v-col>
+        </div>
       <v-col cols="12" style="display: flex; gap: 1rem;">
-        <v-btn color="Info">Edit</v-btn>
+        <v-btn v-if="!Editing" color="Info" @click="Editing = true">Edit</v-btn>
+        <v-btn v-else color="Info" @click="Editing = false">cancle</v-btn>
+        <v-btn v-if="Editing" color="Info" @click="save">save</v-btn>
         <v-btn color="danger" @click="dialogDelete = true">Delete</v-btn>
       </v-col>
     </v-row>
