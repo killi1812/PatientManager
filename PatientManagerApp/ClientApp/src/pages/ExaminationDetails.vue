@@ -1,11 +1,9 @@
 <script lang="ts" setup>
 import {ref, onMounted} from 'vue';
 import {useRoute} from 'vue-router';
-import {getPatient} from '@/api/PatientApi';
-import type {Illness} from "@/model/illness";
-import {deleteExamination, getExamination, getExaminationForIllness} from "@/api/ExaminationApi";
+import {deleteExamination, getExamination} from "@/api/ExaminationApi";
 import type {Examination} from "@/model/examination";
-import {deleteIllness, getIllness} from "@/api/IllnessApi";
+import {ExaminationTypeProps, ExaminationTypeText} from "@/enums/ExaminationType";
 
 const route = useRoute();
 const router = useRouter();
@@ -19,15 +17,15 @@ const fetchDetails = async () => {
   examination.value = response.data;
 };
 
-const deleteItemConfirm =async () => {
-  if(!examination.value)
+const deleteItemConfirm = async () => {
+  if (!examination.value)
     return
   const resposn = await deleteExamination(examination.value?.guid)
   console.log(resposn)
   debugger
-  if (resposn.status !== 204){
+  if (resposn.status !== 204) {
     console.log(resposn)
-   return
+    return
   }
   router.back();
 }
@@ -41,8 +39,11 @@ onMounted(() => {
   <v-container v-if="examination">
     <v-row>
       <v-col cols="12">
-        <h1>{{ examination.type}}</h1>
-        <p>Start: {{examination.examinationTime}}</p>
+        <h1>{{ ExaminationTypeText(examination.type) }}</h1>
+        <p>Start: {{ examination.examinationTime }}</p>
+      </v-col>
+      <v-col cols="12">
+        <v-select :items="ExaminationTypeProps"/>
       </v-col>
       <v-col cols="12" style="display: flex; gap: 1rem;">
         <v-btn color="Info">Edit</v-btn>

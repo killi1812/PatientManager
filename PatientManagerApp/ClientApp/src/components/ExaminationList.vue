@@ -3,6 +3,7 @@
 import {createExamination} from "@/api/ExaminationApi";
 import type {Examination} from "@/model/examination";
 import type {NewExaminationDto} from "@/dto/newExaminationDto";
+import {ExaminationTypeProps, ExaminationTypeText} from "../enums/ExaminationType";
 
 const props = defineProps({
   examinations: {
@@ -87,10 +88,11 @@ const search = (item: Examination) => {
               <v-container>
                 <v-row>
                   <v-col cols="12" md="4" sm="6">
-                    <v-text-field
+                    <v-select
                       v-model="editedItem.type"
                       label="Examinaiton type"
-                    ></v-text-field>
+                      :items="ExaminationTypeProps"
+                    />
                   </v-col>
                   <v-col cols="12" md="8" sm="6">
                     <v-text-field
@@ -130,13 +132,13 @@ const search = (item: Examination) => {
             variant="text"
             @click="toggleGroup(item)"
           ></v-btn>
-          {{ item.value }}
+          {{ExaminationTypeText(item.value) }}
         </td>
       </tr>
     </template>
     <template v-slot:item="{ item }">
       <tr @click="search(item)">
-        <td>{{ item.type }}</td>
+        <td>{{ ExaminationTypeText(item.type)}}</td>
         <td>{{ item.examinationTime }}</td>
         <td>
           <v-icon size="large" @click.stop="search(item)">mdi-magnify</v-icon>
