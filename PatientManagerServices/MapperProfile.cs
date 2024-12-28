@@ -28,7 +28,8 @@ public class MapperProfile : Profile
             .ForMember(dest => dest.MedicalHistoryId, opt => opt.Ignore())
             .ForMember(dest => dest.Examinations, opt => opt.Ignore());
         CreateMap<Illness, IllnessDto>()
-            .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid.ToString()));
+            .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid.ToString()))
+            .ForMember(dest => dest.MedicalHistoryGuid, opt => opt.MapFrom(src => src.MedicalHistory.Guid));
         CreateMap<IllnessDto, Illness>()
             .ForMember(dest => dest.Guid, opt => opt.Ignore())
             .ForMember(dest => dest.Examinations, opt => opt.Ignore())
@@ -37,7 +38,7 @@ public class MapperProfile : Profile
             {
                 opt.PreCondition(src => src.End != null);
                 opt.MapFrom(src => DateOnly.Parse(src.End!));
-            });
+            }) ;
 
         CreateMap<Examination, Examination>()
             .ForMember(dest => dest.Guid, opt => opt.Ignore())

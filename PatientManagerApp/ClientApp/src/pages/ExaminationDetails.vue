@@ -5,10 +5,12 @@ import {deleteExamination, getExamination, updateExamination} from "@/api/Examin
 import type {Examination} from "@/model/examination";
 import {ExaminationTypeProps, ExaminationTypeText} from "@/enums/ExaminationType";
 import type {Illness} from "@/model/illness";
+import {getIllness} from "@/api/IllnessApi";
 
 const route = useRoute();
 const router = useRouter();
 const examination = ref<Examination | undefined>(undefined);
+const illness = ref<Illness | undefined>(undefined)
 const dialogDelete = ref(false)
 const Editing = ref(false)
 
@@ -19,16 +21,24 @@ const fetchDetails = async () => {
   examination.value = response.data;
 };
 
+const fetchIllness = async () => {
+  if (!examination.value?.illness) {
+    return
+  }
+  const rez = await getIllness(examination.value.illness.guid)
+  illness.value = rez.data
+}
+
+
 const deleteItemConfirm = async () => {
   if (!examination.value)
     return
   const resposn = await deleteExamination(examination.value?.guid)
-  console.log(resposn)
-  debugger
   if (resposn.status !== 204) {
     console.log(resposn)
     return
   }
+  //TODO: router.back doesn't work
   router.back();
 }
 
@@ -42,10 +52,12 @@ const save = async () => {
     return
   }
   Editing.value = false
+  await fetchDetails()
 }
 
-onMounted(() => {
-  fetchDetails();
+onMounted(async () => {
+  await fetchDetails();
+  await fetchIllness();
 });
 </script>
 
@@ -55,22 +67,24 @@ onMounted(() => {
       <v-col cols="12" v-if="!Editing">
         <h1>{{ ExaminationTypeText(examination.type) }}</h1>
         <p>Start: {{ examination.examinationTime }}</p>
+        <p v-if="illness" @click=" router.push({name: 'IllnessDetails', params: {guid: illness.guid}}) ">Examination for
+          illness: {{ illness.name }}</p>
       </v-col>
-        <div v-else style="width: 50%">
-          <v-col cols="12" md="4" sm="6">
-            <v-select
-              v-model="examination.type"
-              label="Examinaiton type"
-              :items="ExaminationTypeProps"
-            />
-          </v-col>
-          <v-col cols="12" md="8" sm="6">
-            <v-text-field
-              v-model="examination.examinationTime"
-              label="Examination time"
-            ></v-text-field>
-          </v-col>
-        </div>
+      <div v-else style="width: 50%">
+        <v-col cols="12" md="4" sm="6">
+          <v-select
+            v-model="examination.type"
+            label="Examinaiton type"
+            :items="ExaminationTypeProps"
+          />
+        </v-col>
+        <v-col cols="12" md="8" sm="6">
+          <v-text-field
+            v-model="examination.examinationTime"
+            label="Examination time"
+          ></v-text-field>
+        </v-col>
+      </div>
       <v-col cols="12" style="display: flex; gap: 1rem;">
         <v-btn v-if="!Editing" color="Info" @click="Editing = true">Edit</v-btn>
         <v-btn v-else color="Info" @click="Editing = false">cancle</v-btn>

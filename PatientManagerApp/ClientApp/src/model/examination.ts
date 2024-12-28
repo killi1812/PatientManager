@@ -4,5 +4,5 @@ export interface Examination {
   guid:string;
   examinationTime: string;
   type:number;
-  illness:Illness[]
+  illness:Illness
 }

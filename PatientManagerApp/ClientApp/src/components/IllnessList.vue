@@ -16,6 +16,7 @@ const defaultItem = {
   name: '',
   start: '',
   end: undefined,
+  medicalHistoryGuid: props.medicalHistoryGuid,
   prescriptions: [],
 } as Illness
 

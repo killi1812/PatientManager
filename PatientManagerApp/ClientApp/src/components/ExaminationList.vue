@@ -1,34 +1,33 @@
 <script lang="ts" setup>
 
-import {createExamination} from "@/api/ExaminationApi";
+import {createExamination, getAllExaminations, getExaminationForIllness} from "@/api/ExaminationApi";
 import type {Examination} from "@/model/examination";
 import type {NewExaminationDto} from "@/dto/newExaminationDto";
 import {ExaminationTypeProps, ExaminationTypeText} from "../enums/ExaminationType";
 
 const props = defineProps({
-  examinations: {
-    type: Array<Examination>,
-    required: true,
-  },
-  medicalHistoryGuid:{
+ medicalHistoryGuid:{
     type: String,
     required: true,
   },
+  illnessGuid:String,
   height: Number,
 })
 
 const defaultItem: NewExaminationDto = {
   examinationTime: "",
-  illnessGuid: undefined,
+  illnessGuid: props.illnessGuid,
   medicalHistoryGuid: props.medicalHistoryGuid,
   type: 0
 }
+const examinations = ref<Examination[]>([])
 const router = useRouter()
 const editedIndex = ref(-1)
 const editedItem = ref<NewExaminationDto>(defaultItem)
 const dialog = ref(false)
 const dialogDelete = ref(false)
 const activeGroupBy = ref([])
+const loading = ref(false)
 const groupByType = {
   key: 'type',
   order: 'asc',
@@ -40,6 +39,25 @@ const headers = [
   {title: 'Actions', key: 'actions', sortable: false},
 ]
 
+const fetchExaminations = async () => {
+  loading.value = true
+  try{
+    if (props.illnessGuid) {
+      const rez = await getExaminationForIllness(props.illnessGuid)
+      examinations.value = rez.data
+      return
+    }
+    const rez = await getAllExaminations(props.medicalHistoryGuid)
+    examinations.value = rez.data
+  }
+  catch (e){
+
+  } finally {
+    loading.value = false
+  }
+
+}
+
 const closeDelete = () => {
   dialogDelete.value = false
   nextTick(() => {
@@ -50,12 +68,18 @@ const closeDelete = () => {
 
 const save = async () => {
   await createExamination(editedItem.value)
+  dialog.value = false
+  fetchExaminations()
 }
 
 const search = (item: Examination) => {
   //@ts-ignore
   router.push({name: 'ExaminationDetails', params: {guid: item.guid}})
 }
+
+onMounted(async () => {
+  await fetchExaminations()
+})
 
 </script>
 
@@ -67,6 +91,7 @@ const search = (item: Examination) => {
     :height="height ?? 400"
     item-value="guid"
     density="compact"
+    :loading="loading"
   >
     <template v-slot:top>
       <v-toolbar flat density="compact">
