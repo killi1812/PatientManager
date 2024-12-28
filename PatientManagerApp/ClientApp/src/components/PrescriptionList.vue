@@ -1,16 +1,14 @@
 <script lang="ts" setup>
-
-
 import type {Prescription} from "@/model/prescription";
 
 const props = defineProps({
-  prescriptions: {
-    type: Array<Prescription>,
+  illnessGuid:{
+    type: String,
     required: true,
   },
   height: Number,
 })
-
+const prescriptions = ref<Prescription[]>([])
 const editedIndex = ref(-1)
 const editedItem = ref<Prescription | undefined>(undefined)
 const dialog = ref(false)
@@ -27,15 +25,18 @@ const headers = [
   {title: 'Actions', key: 'actions', sortable: false},
 ]
 
+const fetchPrescriptions = () => {
+  //TODO: Write after writing prescriptions api
+}
 
 const editItem = (item: Prescription) => {
-  editedIndex.value = props.prescriptions.indexOf(item)
+  editedIndex.value = prescriptions.value.indexOf(item)
   editedItem.value = Object.assign({}, item)
   dialog.value = true
 }
 
 const deleteItem = (item: Prescription) => {
-  editedIndex.value = props.prescriptions.indexOf(item)
+  editedIndex.value = prescriptions.value.indexOf(item)
   editedItem.value = Object.assign({}, item)
   dialogDelete.value = true
 }
@@ -76,7 +77,6 @@ const deleteItem = (item: Prescription) => {
       </tr>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-icon size="large" @click="search(item)"> mdi-magnify</v-icon>
       <v-icon class="me-2" size="small" @click="editItem(item)"> mdi-pencil</v-icon>
       <v-icon size="large" @click="deleteItem(item)"> mdi-delete</v-icon>
     </template>

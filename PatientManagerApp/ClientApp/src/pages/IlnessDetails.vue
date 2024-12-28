@@ -54,7 +54,7 @@ onMounted(() => {
     </v-row>
     <v-row>
       <v-col cols="12">
-        <PrescriptionList :prescriptions="illness.prescriptions" :height="500"/>
+        <PrescriptionList :illness-guid="illness.guid" :height="500"/>
       </v-col>
     </v-row>
     <v-row>

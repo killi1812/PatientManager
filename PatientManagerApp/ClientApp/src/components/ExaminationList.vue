@@ -69,7 +69,7 @@ const closeDelete = () => {
 const save = async () => {
   await createExamination(editedItem.value)
   dialog.value = false
-  fetchExaminations()
+  await fetchExaminations()
 }
 
 const search = (item: Examination) => {

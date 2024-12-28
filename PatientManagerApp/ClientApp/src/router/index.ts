@@ -5,8 +5,8 @@
  */
 
 // Composables
-import { createRouter, createWebHistory } from 'vue-router/auto'
-import { setupLayouts } from 'virtual:generated-layouts'
+import {createRouter, createWebHistory} from 'vue-router/auto'
+import {setupLayouts} from 'virtual:generated-layouts'
 import {useAuthStore} from "@/stores/auth";
 
 const routes = [
@@ -19,7 +19,7 @@ const routes = [
     path: '/home',
     name: 'Home',
     component: () => import('@/pages/landingPage.vue'),
-    meta:{ requiresAuth: true, }
+    meta: {requiresAuth: true,}
   },
   {
     path: '/login',
@@ -35,20 +35,32 @@ const routes = [
     path: '/patient-details/:guid',
     name: 'PatientDetails',
     component: () => import('@/pages/patientDetails.vue'),
-    meta:{ requiresAuth: true, }
+    meta: {requiresAuth: true,}
   },
   {
     path: '/illness-details/:guid',
     name: 'IllnessDetails',
     component: () => import('@/pages/IlnessDetails.vue'),
-    meta:{ requiresAuth: true, }
+    meta: {requiresAuth: true,}
   },
   {
-  path: '/examination-details/:guid',
-  name: 'ExaminationDetails',
-  component: () => import('@/pages/ExaminationDetails.vue'),
-  meta:{ requiresAuth: true, }
-},
+    path: '/examination-details/:guid',
+    name: 'ExaminationDetails',
+    component: () => import('@/pages/ExaminationDetails.vue'),
+    meta: {requiresAuth: true,}
+  },
+  {
+    path: '/register-patient',
+    name: 'RegisterPatient',
+    component: () => import('@/pages/RegisterPatient.vue'),
+    meta: {requiresAuth: true,}
+  },
+  {
+    path: '/your-patients',
+    name: 'YourPatients',
+    component: () => import('@/pages/YourPatients.vue'),
+    meta: {requiresAuth: true,}
+  },
 
 
 ]

@@ -1,7 +1,8 @@
 <template>
   <v-app-bar app>
-    <v-btn to="/examinations">Upcoming Examinations</v-btn>
-    <v-btn to="/patients">Your Patients</v-btn>
+    <!--  <v-btn to="/examinations">Upcoming Examinations</v-btn> -->
+    <v-btn to="/home">Patient manager</v-btn>
+    <v-btn to="/your-patients">Your Patients</v-btn>
     <v-btn to="/register-patient">Register a Patient</v-btn>
     <v-spacer></v-spacer>
     {{ username }}
@@ -10,7 +11,6 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue'
 import {useAuthStore} from '@/stores/auth'
 
 const router = useRouter()
@@ -24,7 +24,4 @@ const logout = () => {
 </script>
 
 <style scoped>
-.v-toolbar-title {
-  margin: 0 16px;
-}
 </style>
