@@ -27,6 +27,7 @@ const dialog = ref(false)
 const dialogDelete = ref(false)
 const formTitle = ref('')
 const router = useRouter()
+const loading = ref(false)
 
 
 const headers = [
@@ -36,8 +37,12 @@ const headers = [
   {title: 'Actions', key: 'actions', sortable: false},
 ]
 const fetchIllnessList = async () => {
-  const response = await getIllnessesForPatient(props.medicalHistoryGuid)
-  illnessList.value = response.data
+  try {
+    const response = await getIllnessesForPatient(props.medicalHistoryGuid)
+    illnessList.value = response.data
+  } finally {
+    loading.value = false
+  }
 }
 
 const editItem = (item: Illness) => {
@@ -67,7 +72,7 @@ const closeDelete = () => {
   })
 }
 
-const deleteItemConfirm =async (guid : string) => {
+const deleteItemConfirm = async (guid: string) => {
   await deleteIllness(editedItem.value.guid)
   await fetchIllnessList()
   closeDelete()
@@ -105,8 +110,8 @@ onMounted(() => {
     :height="height ?? 400"
     item-value="guid"
     density="compact"
+    :loading="loading"
   >
-
     <template v-slot:top>
       <v-toolbar flat density="compact">
         <v-toolbar-title>Illnesses</v-toolbar-title>

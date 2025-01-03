@@ -11,12 +11,12 @@
       <v-text-field
         v-model="password"
         label="Password"
-       :rules="passwordRules"
+        :rules="passwordRules"
         type="password"
         required
       ></v-text-field>
       <div class="btn-container">
-        <v-btn type="submit" color="primary" :disabled="!valid">Login</v-btn>
+        <v-btn type="submit" color="primary" :disabled="!valid" :loading="loading">Login</v-btn>
         <v-btn type="button" color="primary" @click="router.push({name:'/register'})">Register</v-btn>
       </div>
     </v-form>
@@ -33,8 +33,10 @@ const password = ref('')
 const authStore = useAuthStore()
 const router = useRouter()
 const valid = ref(false)
+const loading = ref(false)
 
 const loginUser = async () => {
+  loading.value = true
   try {
     const response = await login(email.value, password.value)
     authStore.setToken(response.data.token)
@@ -43,6 +45,8 @@ const loginUser = async () => {
     await router.replace({name: "Home"})
   } catch (error) {
     console.error('Login failed:', error)
+  } finally {
+    loading.value = false
   }
 }
 
@@ -58,7 +62,7 @@ const passwordRules = [
 </script>
 
 <style scoped>
-.btn-container{
+.btn-container {
   display: flex;
   justify-content: space-evenly;
 }

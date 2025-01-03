@@ -31,8 +31,8 @@ const prescriptions = ref<Prescription[]>([])
 const editedIndex = ref(-1)
 const editedItem = ref<Prescription>(defaultValue)
 const dialog = ref(false)
-const dialogDelete = ref(false)
 const activeGroupBy = ref([])
+const loading = ref(false)
 const groupByName = {
   key: 'name',
   order: 'asc',
@@ -45,8 +45,14 @@ const headers = [
 ]
 
 const fetchPrescriptions = async () => {
-  const rez = await getPrescriptionsForIllness(props.illnessGuid)
-  prescriptions.value = rez.data
+  loading.value = true
+  try{
+    const rez = await getPrescriptionsForIllness(props.illnessGuid)
+    prescriptions.value = rez.data
+  }
+  finally {
+    loading.value = false
+  }
 }
 
 const editItem = (item: Prescription) => {
@@ -86,6 +92,7 @@ onMounted(async () => {
     :height="height ?? 400"
     item-value="guid"
     density="compact"
+    :loading="loading"
   >
     <template v-slot:top>
       <v-toolbar flat density="compact">
