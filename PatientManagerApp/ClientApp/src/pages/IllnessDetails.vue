@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import {ref, onMounted} from 'vue';
 import {useRoute} from 'vue-router';
-import {getPatient} from '@/api/PatientApi';
 import type {Illness} from "@/model/illness";
 import {getExaminationForIllness} from "@/api/ExaminationApi";
 import type {Examination} from "@/model/examination";
@@ -54,7 +53,7 @@ onMounted(() => {
     </v-row>
     <v-row>
       <v-col cols="12">
-        <PrescriptionList :illness-guid="illness.guid" :height="500"/>
+        <PrescriptionList :medical-history-guid="illness.medicalHistoryGuid" :illness-guid="illness.guid" :height="500"/>
       </v-col>
     </v-row>
     <v-row>

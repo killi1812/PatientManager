@@ -40,7 +40,7 @@ const routes = [
   {
     path: '/illness-details/:guid',
     name: 'IllnessDetails',
-    component: () => import('@/pages/IlnessDetails.vue'),
+    component: () => import('@/pages/IllnessDetails.vue'),
     meta: {requiresAuth: true,}
   },
   {

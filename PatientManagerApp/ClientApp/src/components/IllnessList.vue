@@ -12,7 +12,7 @@ const props = defineProps({
 })
 
 const defaultItem = {
-  guid: '',
+  guid: '1',
   name: '',
   start: '',
   end: undefined,

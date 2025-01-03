@@ -5,8 +5,7 @@ import { mapForm } from '@/helpers/formHelpers';
 const baseUrl = '/Illness';
 
 export const createIllness = async (medicalHistoryGuid: string, illnessDto: Illness) => {
-  const formData = new FormData();
-  formData.append('illnessDto', JSON.stringify(illnessDto));
+  const formData = mapForm(illnessDto);
 
   const response = await axios.post(`${baseUrl}/CreateIllness/${medicalHistoryGuid}`, formData, {
     headers: {

@@ -2,15 +2,28 @@
 import type {Prescription} from "@/model/prescription";
 
 const props = defineProps({
-  illnessGuid:{
+  illnessGuid: {
+    type: String,
+    required: true,
+  },
+  medicalHistoryGuid: {
     type: String,
     required: true,
   },
   height: Number,
 })
+
+const defaultValue: Prescription = {
+  date: new Date().toLocaleDateString("us"),
+  guid: "",
+  illnessGuid: props.illnessGuid,
+  medicalHistoryGuid: props.medicalHistoryGuid,
+  name: ""
+
+}
 const prescriptions = ref<Prescription[]>([])
 const editedIndex = ref(-1)
-const editedItem = ref<Prescription | undefined>(undefined)
+const editedItem = ref<Prescription>(defaultValue)
 const dialog = ref(false)
 const dialogDelete = ref(false)
 const activeGroupBy = ref([])
@@ -41,6 +54,9 @@ const deleteItem = (item: Prescription) => {
   dialogDelete.value = true
 }
 
+const save = () => {
+}
+
 </script>
 
 <template>
@@ -60,7 +76,45 @@ const deleteItem = (item: Prescription) => {
         <v-btn color="primary" @click="activeGroupBy = [groupByName!]">Group by name
         </v-btn>
         <v-btn color="primary" @click="activeGroupBy=[]">Clear group by</v-btn>
-        <v-btn color="primary" @click="dialog = true">Add Prescription</v-btn>
+        <v-dialog v-model="dialog" max-width="500px">
+          <template v-slot:activator="{ props }">
+            <v-btn color="primary" @click="dialog = true" v-bind:props>Add Prescription</v-btn>
+          </template>
+          <v-card>
+            <v-card-title>
+              <span class="text-h5">Add new Examination</span>
+            </v-card-title>
+
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols="12" md="4" sm="6">
+                    <v-text-field
+                      v-model="editedItem.name"
+                      label="Name"
+                    />
+                  </v-col>
+                  <v-col cols="12" md="8" sm="6">
+                    <v-text-field
+                      v-model="editedItem.date"
+                      label="Examination time"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue-darken-1" variant="text" @click="dialog = false">
+                Cancel
+              </v-btn>
+              <v-btn color="blue-darken-1" variant="text" @click="save">
+                Save
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-toolbar>
     </template>
     <template v-slot:group-header="{ item, columns, toggleGroup, isGroupOpen }">
