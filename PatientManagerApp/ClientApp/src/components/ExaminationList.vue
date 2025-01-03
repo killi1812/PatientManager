@@ -166,7 +166,7 @@ onMounted(async () => {
         <td>{{ ExaminationTypeText(item.type)}}</td>
         <td>{{ item.examinationTime }}</td>
         <td>
-          <v-icon size="large" @click.stop="search(item)">mdi-magnify</v-icon>
+          <v-icon size="large" @click.stop="search(item)">mdi-eye</v-icon>
         </td>
       </tr>
     </template>

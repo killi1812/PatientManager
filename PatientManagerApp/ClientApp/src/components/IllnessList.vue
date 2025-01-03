@@ -191,7 +191,7 @@ onMounted(() => {
     <template v-slot:item.actions="{ item }">
       <v-icon v-if="item.end == undefined" size="large" @click="stop(item)"> mdi-stop</v-icon>
       <v-icon v-else></v-icon>
-      <v-icon size="large" @click="search(item)"> mdi-magnify</v-icon>
+      <v-icon size="large" @click="search(item)"> mdi-eye</v-icon>
       <v-icon class="me-2" size="small" @click="editItem(item)"> mdi-pencil</v-icon>
       <v-icon size="large" @click="deleteItem(item)"> mdi-delete</v-icon>
     </template>

@@ -11,9 +11,10 @@ public interface IPatientService
 {
     Task<List<Patient>> GetAll(string q, int page, int n);
     Task<Patient> Get(Guid guid);
-    Task<Patient> Create(Patient newPatient);
+    Task<Patient> Create(Patient newPatient, Guid doctorGuid);
     Task Delete(Guid guid);
     Task<Patient> Update(Guid guid, Patient newPatient);
+    Task<List<Patient>> GetAll(Guid guid, int page, int n);
 }
 
 public class PatientService : IPatientService
@@ -31,12 +32,12 @@ public class PatientService : IPatientService
     {
         if (page < 1)
             throw new Exception("Page can't be less then 1");
-        
+
         IQueryable<Patient> qPatients = _context.Patients
             .AsNoTracking()
             .Include(p => p.MedicalHistory)
             .OrderBy(p => p.NameNormalized);
-    
+
         if (!String.IsNullOrEmpty(q))
         {
             var tmp = qPatients.Where(p => p.Mbo.Contains(q));
@@ -45,6 +46,7 @@ public class PatientService : IPatientService
             else
                 qPatients = tmp;
         }
+
         return await qPatients
             .Skip(n * (page - 1))
             .Take(n)
@@ -61,8 +63,12 @@ public class PatientService : IPatientService
         return patient;
     }
 
-    public async Task<Patient> Create(Patient newPatient)
+    public async Task<Patient> Create(Patient newPatient, Guid doctorGuid)
     {
+        var doctor =await _context.Doctors.FirstOrDefaultAsync(d => d.Guid == doctorGuid);
+        if (doctor == null) throw new NotFoundException($"Doctor with guid {doctorGuid} not found");
+        newPatient.DoctorId = doctor.Id;
+        
         var mh = new MedicalHistory();
         await _context.MedicalHistories.AddAsync(mh);
 
@@ -94,5 +100,19 @@ public class PatientService : IPatientService
 
         return await _context.Patients.AsNoTracking().FirstOrDefaultAsync(p => p.Guid == guid) ??
                throw new NotFoundException($"Patient with guid {guid} was not found");
+    }
+
+    public async Task<List<Patient>> GetAll(Guid guid, int page, int n)
+    {
+        var patients = await _context.Patients
+            .AsNoTracking()
+            .Where(p => p.Doctor.Guid == guid)
+            .Include(p => p.MedicalHistory)
+            .OrderBy(p => p.NameNormalized)
+            .Skip(n * (page - 1))
+            .Take(n)
+            .ToListAsync();
+
+        return patients;
     }
 }

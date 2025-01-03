@@ -1,11 +1,11 @@
 import axios from "@/plugins/axios";
-import type { Patient } from '@/model/patient';
+import type {Patient} from '@/model/patient';
+import {mapForm} from "@/helpers/formHelpers";
 
 const baseUrl = '/patient';
 
 export const createPatient = async (patientDto: Patient) => {
-  const formData = new FormData();
-  formData.append('patientDto', JSON.stringify(patientDto));
+  const formData = mapForm(patientDto)
 
   const response = await axios.post(`${baseUrl}/CreatePatient`, formData, {
     headers: {
@@ -16,8 +16,7 @@ export const createPatient = async (patientDto: Patient) => {
 };
 
 export const updatePatient = async (guid: string, patientDto: Patient) => {
-  const formData = new FormData();
-  formData.append('patientDto', JSON.stringify(patientDto));
+  const formData = mapForm(patientDto)
 
   const response = await axios.put(`${baseUrl}/UpdatePatient/${guid}`, formData, {
     headers: {
@@ -39,7 +38,14 @@ export const getPatient = async (guid: string) => {
 
 export const getPatients = async (q: string | null = null, page: number = 1, n: number = 10) => {
   const response = await axios.get(baseUrl, {
-    params: { q, page, n },
+    params: {q, page, n},
+  });
+  return response;
+};
+
+export const getYourPatients = async (page: number = 1, n: number = 10) => {
+  const response = await axios.get(`${baseUrl}/GetYorPatients`, {
+    params: {page, n},
   });
   return response;
 };

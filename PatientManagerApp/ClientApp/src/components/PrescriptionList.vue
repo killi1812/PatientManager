@@ -46,11 +46,10 @@ const headers = [
 
 const fetchPrescriptions = async () => {
   loading.value = true
-  try{
+  try {
     const rez = await getPrescriptionsForIllness(props.illnessGuid)
     prescriptions.value = rez.data
-  }
-  finally {
+  } finally {
     loading.value = false
   }
 }
@@ -69,7 +68,7 @@ const deleteItem = async (item: Prescription) => {
 const save = async () => {
 
   if (editedIndex.value > -1) {
-    await updatePrescription(editedItem.value.guid,editedItem.value)
+    await updatePrescription(editedItem.value.guid, editedItem.value)
   } else {
     await createPrescription(editedItem.value)
   }

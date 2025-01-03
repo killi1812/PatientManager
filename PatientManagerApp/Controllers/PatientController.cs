@@ -22,12 +22,25 @@ public class PatientController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetPatients([FromQuery] string q = null, [FromQuery] int page = 1, [FromQuery] int n = 10)
+    public async Task<IActionResult> GetPatients([FromQuery] string q = null, [FromQuery] int page = 1,
+        [FromQuery] int n = 10)
     {
         var patients = await _patientService.GetAll(q, page, n);
         var dto = _mapper.Map<List<PatientDto>>(patients);
         return Ok(dto);
     }
+
+    [HttpGet("[action]")]
+    public async Task<IActionResult> GetYorPatients([FromQuery] int page = 1, [FromQuery] int n = 10)
+    {
+        var guid = HttpContext.User.FindFirst("guid")?.Value;
+        if (guid == null) return Unauthorized("You need to be logged");
+
+        var patients = await _patientService.GetAll(Guid.Parse(guid), page, n);
+        var dto = _mapper.Map<List<PatientDto>>(patients);
+        return Ok(dto);
+    }
+
 
     [HttpGet("{guid}")]
     public async Task<IActionResult> GetPatient([FromRoute] string guid)
@@ -47,7 +60,13 @@ public class PatientController : ControllerBase
     [HttpPost("[action]")]
     public async Task<IActionResult> CreatePatient([FromForm] PatientDto patientDto)
     {
-        var patient = await _patientService.Create(_mapper.Map<Patient>(patientDto));
+        var guid = HttpContext.User.FindFirst("guid")?.Value;
+        if (guid == null)
+            return Unauthorized("You need to be logged");
+
+        var patient = _mapper.Map<Patient>(patientDto);
+        patient = await _patientService.Create(patient, Guid.Parse(guid));
+        
         var dto = _mapper.Map<PatientDto>(patient);
         return Ok(dto);
     }
