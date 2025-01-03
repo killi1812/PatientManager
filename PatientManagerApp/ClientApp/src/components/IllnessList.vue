@@ -75,7 +75,6 @@ const deleteItemConfirm =async (guid : string) => {
 
 const save = async () => {
   if (editedIndex.value > -1) {
-    //TODO update doens't map propperly
     await updateIllness(editedItem.value.guid, editedItem.value)
   } else {
     await createIllness(props.medicalHistoryGuid, editedItem.value)

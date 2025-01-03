@@ -1,6 +1,12 @@
 <script lang="ts" setup>
 import type {Prescription} from "@/model/prescription";
-import {createPrescription, deletePrescription, getPrescriptionsForIllness} from "@/api/Prescriptions";
+import {
+  createPrescription,
+  deletePrescription,
+  getPrescriptionsForIllness,
+  updatePrescription
+} from "@/api/Prescriptions";
+import {updateExamination} from "@/api/ExaminationApi";
 
 const props = defineProps({
   illnessGuid: {
@@ -55,7 +61,13 @@ const deleteItem = async (item: Prescription) => {
 }
 
 const save = async () => {
-  await createPrescription(editedItem.value)
+
+  if (editedIndex.value > -1) {
+    await updatePrescription(editedItem.value.guid,editedItem.value)
+  } else {
+    await createPrescription(editedItem.value)
+  }
+
   await fetchPrescriptions()
   dialog.value = false
 }

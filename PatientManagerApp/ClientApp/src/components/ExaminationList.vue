@@ -3,7 +3,7 @@
 import {createExamination, getAllExaminations, getExaminationForIllness} from "@/api/ExaminationApi";
 import type {Examination} from "@/model/examination";
 import type {NewExaminationDto} from "@/dto/newExaminationDto";
-import {ExaminationTypeProps, ExaminationTypeText} from "../enums/ExaminationType";
+import {ExaminationTypeProps, ExaminationTypeText} from "@/enums/ExaminationType";
 
 const props = defineProps({
  medicalHistoryGuid:{

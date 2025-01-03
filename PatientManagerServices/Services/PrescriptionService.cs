@@ -77,7 +77,7 @@ public class PrescriptionService : IPrescriptionService
         if (pOld == null)
             throw new NotFoundException($"Prescription with guid: {guid} not found");
 
-        _ = _mapper.Map(pOld, prescription);
+         _ = _mapper.Map( prescription,pOld);
         await _context.SaveChangesAsync();
 
         return await _context.Prescriptions.AsNoTracking().FirstOrDefaultAsync(p => p.Guid == guid) ??
@@ -89,6 +89,8 @@ public class PrescriptionService : IPrescriptionService
         var prescriptions = await _context.Prescriptions
             .AsNoTracking()
             .Where(p => p.MedicalHistory.Guid == MedicalHistoryGuid)
+            .Include(p => p.MedicalHistory)
+            .Include(p => p.Illness)
             .ToListAsync();
 
         return prescriptions;
@@ -99,6 +101,8 @@ public class PrescriptionService : IPrescriptionService
         var prescriptions = await _context.Prescriptions
             .AsNoTracking()
             .Where(p => p.Illness.Guid == IllnessGuid)
+            .Include(p => p.MedicalHistory)
+            .Include(p => p.Illness)
             .ToListAsync();
         return prescriptions;
     }
