@@ -36,10 +36,10 @@
         type="password"
         required
       ></v-text-field>
-<div class="btn-container">
-  <v-btn type="button" color="primary" @click="router.push({name:'/login'})">Login</v-btn>
-  <v-btn type="submit" color="primary" :disabled="!valid">Register</v-btn>
-</div>
+      <div class="btn-container">
+        <v-btn type="button" color="primary" @click="router.push({name:'Login'})">Login</v-btn>
+        <v-btn type="submit" color="primary" :disabled="!valid" :loading="loading">Register</v-btn>
+      </div>
     </v-form>
   </v-container>
 </template>
@@ -48,7 +48,9 @@
 import {ref} from 'vue'
 import type {NewDoctor} from '@/model/newDoctor'
 import {register} from "@/api/DoctorApi";
+
 const router = useRouter()
+const loading = ref(false)
 const valid = ref(false)
 const doctor = ref<NewDoctor>({
   Name: "",
@@ -84,15 +86,15 @@ const passwordRules = [
 ]
 
 const submitRegister = async () => {
-  debugger;
   if (valid.value) {
-    console.log('Form submitted:', doctor.value)
-    try{
+    loading.value = true
+    try {
       const rez = await register(doctor.value)
       console.log(rez)
-    }
-    catch (e) {
-     console.log(e)
+    } catch (e) {
+      console.log(e)
+    } finally {
+      loading.value = true
     }
   }
 }
@@ -100,10 +102,11 @@ const submitRegister = async () => {
 
 <style scoped>
 
-.btn-container{
+.btn-container {
   display: flex;
   justify-content: space-evenly;
 }
+
 .v-container {
   max-width: 400px;
   margin: 0 auto;
