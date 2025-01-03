@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type {Prescription} from "@/model/prescription";
+import {createPrescription, deletePrescription, getPrescriptionsForIllness} from "@/api/Prescriptions";
 
 const props = defineProps({
   illnessGuid: {
@@ -14,12 +15,11 @@ const props = defineProps({
 })
 
 const defaultValue: Prescription = {
+  guid: "1",
+  name: "",
   date: new Date().toLocaleDateString("us"),
-  guid: "",
   illnessGuid: props.illnessGuid,
   medicalHistoryGuid: props.medicalHistoryGuid,
-  name: ""
-
 }
 const prescriptions = ref<Prescription[]>([])
 const editedIndex = ref(-1)
@@ -38,8 +38,9 @@ const headers = [
   {title: 'Actions', key: 'actions', sortable: false},
 ]
 
-const fetchPrescriptions = () => {
-  //TODO: Write after writing prescriptions api
+const fetchPrescriptions = async () => {
+  const rez = await getPrescriptionsForIllness(props.illnessGuid)
+  prescriptions.value = rez.data
 }
 
 const editItem = (item: Prescription) => {
@@ -48,14 +49,20 @@ const editItem = (item: Prescription) => {
   dialog.value = true
 }
 
-const deleteItem = (item: Prescription) => {
-  editedIndex.value = prescriptions.value.indexOf(item)
-  editedItem.value = Object.assign({}, item)
-  dialogDelete.value = true
+const deleteItem = async (item: Prescription) => {
+  await deletePrescription(item.guid)
+  await fetchPrescriptions()
 }
 
-const save = () => {
+const save = async () => {
+  await createPrescription(editedItem.value)
+  await fetchPrescriptions()
+  dialog.value = false
 }
+
+onMounted(async () => {
+  await fetchPrescriptions()
+})
 
 </script>
 
