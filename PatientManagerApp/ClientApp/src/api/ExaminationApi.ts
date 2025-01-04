@@ -27,6 +27,15 @@ export const updateExamination = async (guid: string, examinationDto: Examinatio
   return response;
 };
 
+export const uploadExaminationPicture = async (guid: string, formData: FormData) => {
+  const response = await axios.post(`/examination/upload/${guid}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response;
+};
+
 export const deleteExamination = async (guid: string) => {
   const response = await axios.delete(`${baseUrl}/${guid}`);
   return response;
