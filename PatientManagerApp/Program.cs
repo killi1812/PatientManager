@@ -32,6 +32,7 @@ builder.Services.AddScoped<IIllnessService, IllnessService>();
 builder.Services.AddScoped<IExaminationService, ExaminationService>();
 builder.Services.AddScoped<IPrescriptionService,PrescriptionService>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
+builder.Services.AddScoped<IMedicalHistoryService, MedicalHistoryService>();
 
 builder.Services.AddControllers();
 
@@ -42,6 +43,7 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
+Directory.CreateDirectory("./tmp");
 if (!app.Environment.IsDevelopment())
 {
     app.UseHsts();

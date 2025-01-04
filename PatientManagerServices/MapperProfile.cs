@@ -59,7 +59,8 @@ public class MapperProfile : Profile
             .ForMember(dest => dest.Type, opt => opt.MapFrom(src => (ExaminationType)src.Type));
 
         CreateMap<MedicalHistory, MedicalHistoryDto>()
-            .ForMember(dest => dest.Guid, opt => opt.MapFrom(mh => mh.Guid.ToString()));
+            .ForMember(dest => dest.Guid, opt => opt.MapFrom(mh => mh.Guid.ToString()))
+            .ForMember(dest => dest.Illnesss, opt => opt.MapFrom(src => src.PastIlnesses));
 
         CreateMap<Prescription, Prescription>()
             .ForMember(dest => dest.Guid, opt => opt.Ignore())

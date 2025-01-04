@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import {ref, onMounted} from 'vue';
 import {useRoute} from 'vue-router';
-import {getPatient} from '@/api/PatientApi';
+import {downloadCsv, getPatient} from '@/api/PatientApi';
 import {getAllExaminations} from "@/api/ExaminationApi";
 import type {Patient} from '@/model/patient';
 import type {Examination} from "@/model/examination";
@@ -42,6 +42,7 @@ onMounted(() => {
       <v-col cols="12">
         <h1>{{ patient.name }} {{ patient.surname }}</h1>
         <p>MBO: {{ patient.mbo }}</p>
+        <v-btn @click="downloadCsv(patient.guid)">Download Medical History</v-btn>
       </v-col>
     </v-row>
     <v-row>

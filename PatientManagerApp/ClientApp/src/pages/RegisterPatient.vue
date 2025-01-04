@@ -58,5 +58,13 @@ const submitForm = async () => {
 </script>
 
 <style scoped>
-/* Add any custom styles here */
+.v-container {
+  max-width: 600px;
+  margin: 3rem auto;
+  padding: 1rem;
+  display: flex;
+  justify-content: start;
+  flex-direction: column;
+  height: calc(100vh - 40px);
+}
 </style>

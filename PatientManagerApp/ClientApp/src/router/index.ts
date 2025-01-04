@@ -8,62 +8,69 @@
 import {createRouter, createWebHistory} from 'vue-router/auto'
 import {setupLayouts} from 'virtual:generated-layouts'
 import {useAuthStore} from "@/stores/auth";
+import Index from '@/pages/index.vue';
+import Home from '@/pages/landingPage.vue';
+import Login from '@/pages/login.vue';
+import Register from '@/pages/register.vue';
+import PatientDetails from '@/pages/patientDetails.vue';
+import IllnessDetails from '@/pages/IllnessDetails.vue';
+import ExaminationDetails from '@/pages/ExaminationDetails.vue';
+import RegisterPatient from '@/pages/RegisterPatient.vue';
+import YourPatients from '@/pages/YourPatients.vue';
 
 const routes = [
   {
     path: '/',
     name: 'Index',
-    component: () => import('@/pages/index.vue'),
+    component: Index,
   },
   {
     path: '/home',
     name: 'Home',
-    component: () => import('@/pages/landingPage.vue'),
+    component: Home,
     meta: {requiresAuth: true,}
   },
   {
     path: '/login',
     name: 'Login',
-    component: () => import('@/pages/login.vue'),
+    component: Login,
   },
   {
     path: '/register',
     name: 'Register',
-    component: () => import('@/pages/register.vue'),
+    component: Register,
   },
   {
     path: '/patient-details/:guid',
     name: 'PatientDetails',
-    component: () => import('@/pages/patientDetails.vue'),
+    component: PatientDetails,
     meta: {requiresAuth: true,}
   },
   {
     path: '/illness-details/:guid',
     name: 'IllnessDetails',
-    component: () => import('@/pages/IllnessDetails.vue'),
+    component: IllnessDetails,
     meta: {requiresAuth: true,}
   },
   {
     path: '/examination-details/:guid',
     name: 'ExaminationDetails',
-    component: () => import('@/pages/ExaminationDetails.vue'),
+    component: ExaminationDetails,
     meta: {requiresAuth: true,}
   },
   {
     path: '/register-patient',
     name: 'RegisterPatient',
-    component: () => import('@/pages/RegisterPatient.vue'),
+    component: RegisterPatient,
     meta: {requiresAuth: true,}
   },
   {
     path: '/your-patients',
     name: 'YourPatients',
-    component: () => import('@/pages/YourPatients.vue'),
+    component: YourPatients,
     meta: {requiresAuth: true,}
   },
-
-
-]
+];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
