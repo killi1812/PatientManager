@@ -13,11 +13,14 @@ public class ExaminationController : ControllerBase
 {
     private readonly IMapper _mapper;
     private readonly IExaminationService _examinationService;
+    private readonly IMinioService _minioService;
+    private const string BucketName = "examinations";
 
-    public ExaminationController(IMapper mapper, IExaminationService examinationService)
+    public ExaminationController(IMapper mapper, IExaminationService examinationService, IMinioService minioService)
     {
         _mapper = mapper;
         _examinationService = examinationService;
+        _minioService = minioService;
     }
 
     [HttpGet("{guid}")]
@@ -67,5 +70,35 @@ public class ExaminationController : ControllerBase
         var ex = await _examinationService.Update(Guid.Parse(guid), dto);
         var exDto = _mapper.Map<ExaminationDto>(ex);
         return exDto;
+    }
+    
+
+    [HttpPost("[action]")]
+    public async Task<IActionResult> UploadFile([FromForm] FileDto file)
+    {
+        var filePath = Path.GetTempFileName();
+
+        await using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.File.CopyToAsync(stream);
+        }
+
+        await _minioService.UploadFileAsync(BucketName, file.File.FileName, filePath);
+
+        return Ok($"File {file.File.FileName} uploaded successfully.");
+    }
+
+    [HttpGet("[action]")]
+    public async Task<IActionResult> DownloadFile(string fileName)
+    {
+        var filePath = Path.GetTempFileName();
+        await _minioService.DownloadFileAsync(BucketName, fileName, filePath);
+        return PhysicalFile(filePath, "application/octet-stream", fileName);
+    }
+
+    [HttpGet("[action]")]
+    public async Task<IActionResult> ListFiles()
+    {
+        return Ok(await _minioService.GetListFilesAsync(BucketName));
     }
 }

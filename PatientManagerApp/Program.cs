@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Minio;
 using PatientManagerServices;
 using PatientManagerServices.Models;
 using PatientManagerServices.Services;
@@ -12,6 +13,15 @@ builder.Services.AddAutoMapper(typeof(MapperProfile));
 var conf = builder.Configuration;
 builder.Services.AddDbContext<PmDbContext>(o => o.UseNpgsql(conf.GetConnectionString("Default")));
 
+var endpoint = conf["MinioConn:endpoint"];
+var accessKey =  conf["MinioConn:AccessKeyID"];
+var sercretKey = conf["MinioConn:SecretAccessKey"];
+
+ builder.Services.AddMinio(options => options
+        .WithEndpoint(endpoint)
+        .WithCredentials(accessKey,sercretKey)
+        .WithSSL(false)
+);
 string keyb = builder.Configuration["key"];
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(o =>
@@ -33,6 +43,7 @@ builder.Services.AddScoped<IExaminationService, ExaminationService>();
 builder.Services.AddScoped<IPrescriptionService,PrescriptionService>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<IMedicalHistoryService, MedicalHistoryService>();
+builder.Services.AddScoped<IMinioService, MinioService>();
 
 builder.Services.AddControllers();
 
