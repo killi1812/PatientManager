@@ -1,6 +1,8 @@
 using System.Reactive.Linq;
+using Microsoft.AspNetCore.Http;
 using Minio;
 using Minio.ApiEndpoints;
+using Minio.DataModel;
 using Minio.DataModel.Args;
 using Minio.Exceptions;
 
@@ -8,9 +10,9 @@ namespace PatientManagerServices.Services;
 
 public interface IMinioService
 {
-    public Task UploadFileAsync(string bucketName, string objectName, string filePath);
+    public Task<string> UploadFileAsync(string bucketName, IFormFile objectName, string filePath);
 
-    public Task DownloadFileAsync(string testBucket, string fileName, string filePath);
+    public Task<ObjectStat> DownloadFileAsync(string testBucket, string fileName, string filePath);
 
     Task<IEnumerable<string>> GetListFilesAsync(string testBucket);
 }
@@ -23,12 +25,9 @@ public class MinioService : IMinioService
     {
         _minioClient = minioClient;
     }
-    public async Task UploadFileAsync(string bucketName, string objectName, string filePath)
+    public async Task<string> UploadFileAsync(string bucketName, IFormFile file, string filePath)
     {
-        var contentType = "application/zip";
-
-        try
-        {
+        var newFileName = $"{Guid.NewGuid()}.{file.FileName.Split(".")[1]}";
             // Make a bucket on the server, if not already present.
             var beArgs = new BucketExistsArgs()
                 .WithBucket(bucketName);
@@ -42,39 +41,26 @@ public class MinioService : IMinioService
             // Upload a file to bucket.
             var putObjectArgs = new PutObjectArgs()
                 .WithBucket(bucketName)
-                .WithObject(objectName)
+                .WithObject(newFileName)
                 .WithFileName(filePath)
-                .WithContentType(contentType);
+                .WithContentType(file.ContentType);
             await _minioClient.PutObjectAsync(putObjectArgs).ConfigureAwait(false);
-            Console.WriteLine("Successfully uploaded " + objectName);
-        }
-        catch (MinioException e)
-        {
-            Console.WriteLine("File Upload Error: {0}", e.Message);
-        }
+            return newFileName;
     }
 
-    public async Task DownloadFileAsync(string testBucket, string objectName, string filePath)
+    public async Task<ObjectStat> DownloadFileAsync(string testBucket, string objectName, string filePath)
     {
-        try
-        {
             var statObjectArgs = new StatObjectArgs()
                 .WithBucket(testBucket)
                 .WithObject(objectName);
-            await _minioClient.StatObjectAsync(statObjectArgs);
+            var rez = await _minioClient.StatObjectAsync(statObjectArgs);
 
             var getObjectArgs = new GetObjectArgs()
                 .WithBucket(testBucket)
                 .WithObject(objectName)
                 .WithFile(filePath);
             await _minioClient.GetObjectAsync(getObjectArgs);
-
-            Console.WriteLine($"Successfully downloaded {objectName} to {filePath}");
-        }
-        catch (MinioException e)
-        {
-            Console.WriteLine($"File Download Error: {e.Message}");
-        }
+            return rez;
     }
 
     public Task<IEnumerable<string>> GetListFilesAsync(string testBucket)

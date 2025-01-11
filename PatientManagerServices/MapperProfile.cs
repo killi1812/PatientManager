@@ -48,7 +48,8 @@ public class MapperProfile : Profile
             .ForMember(dest => dest.MedicalHistory, opt => opt.Ignore())
             .ForMember(dest => dest.MedicalHistoryId, opt => opt.Ignore());
         CreateMap<Examination, ExaminationDto>()
-            .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid.ToString()));
+            .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid.ToString()))
+            .ForMember(dest => dest.FileGuids, opt => opt.MapFrom(src => src.Files.Select(f => f.FileGuid)));
         CreateMap<ExaminationDto, Examination>()
             .ForMember(dest => dest.Guid, opt => opt.Ignore());
         CreateMap<NewExaminationDto, Examination>()

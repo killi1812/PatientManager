@@ -1,7 +1,12 @@
 <script lang="ts" setup>
 import {ref, onMounted} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
-import {deleteExamination, getExamination, updateExamination, uploadExaminationPicture} from "@/api/ExaminationApi";
+import {
+  deleteExamination,
+  getExamination,
+  updateExamination,
+  uploadExaminationPicture
+} from "@/api/ExaminationApi";
 import type {Examination} from "@/model/examination";
 import {ExaminationTypeProps, ExaminationTypeText} from "@/enums/ExaminationType";
 import type {Illness} from "@/model/illness";
@@ -56,6 +61,7 @@ const handleFileUpload = async () => {
   const formData = new FormData();
   formData.append('file', selectedFile.value);
   await uploadExaminationPicture(examination.value.guid, formData);
+  await fetchDetails();
 };
 
 onMounted(async () => {
@@ -105,9 +111,22 @@ onMounted(async () => {
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <div class="mt-3" style="display: flex; height: 70vh">
+      <div class="gallery">
+        <image-examination v-for="img in examination.fileGuids" :img-name="img"/>
+      </div>
+    </div>
   </v-container>
 </template>
 
 <style scoped>
-/* Add any necessary styles */
+.gallery {
+  flex-grow: 1;
+  gap: 1rem;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
 </style>

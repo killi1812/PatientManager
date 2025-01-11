@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PatientManagerServices.Dtos;
 using PatientManagerServices.Models;
 using PatientManagerServices.Services;
+using File = PatientManagerServices.Models.File;
 
 namespace PatientManagerApp.Controllers;
 
@@ -78,31 +79,27 @@ public class ExaminationController : ControllerBase
     public async Task<IActionResult> Upload(string guid, [FromForm] FileDto file)
     {
         var filePath = Path.GetTempFileName();
-        Console.WriteLine(guid);
 
         await using (var stream = new FileStream(filePath, FileMode.Create))
         {
             await file.File.CopyToAsync(stream);
         }
 
-        var newFileName = $"{Guid.NewGuid()}.{file.File.FileName.Split(".")[1]}";
-        await _minioService.UploadFileAsync(BucketName, newFileName, filePath);
-
-        return Ok($"File {file.File.FileName} uploaded successfully.");
+        var newFileName = await _minioService.UploadFileAsync(BucketName, file.File, filePath);
+        var newFile = new File
+        {
+            FileGuid = newFileName,
+            FileName = file.File.FileName
+        };
+        await _examinationService.AddFile(Guid.Parse(guid), newFile);
+        return Ok();
     }
 
-    [HttpGet("[action]/{guid}")]
-    public async Task<IActionResult> DownloadFile(string guid)
+    [HttpGet("file/{fileName}")]
+    public async Task<IActionResult> GetFile(string fileName)
     {
-        string fileName = "";
         var filePath = Path.GetTempFileName();
-        await _minioService.DownloadFileAsync(BucketName, fileName, filePath);
-        return PhysicalFile(filePath, "application/octet-stream", fileName);
-    }
-
-    [HttpGet("[action]")]
-    public async Task<IActionResult> ListFiles()
-    {
-        return Ok(await _minioService.GetListFilesAsync(BucketName));
+        var stat = await _minioService.DownloadFileAsync(BucketName, fileName, filePath);
+        return PhysicalFile(filePath, stat.ContentType, fileName);
     }
 }

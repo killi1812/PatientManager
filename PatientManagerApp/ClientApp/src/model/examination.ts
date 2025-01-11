@@ -5,4 +5,5 @@ export interface Examination {
   examinationTime: string;
   type:number;
   illness:Illness
+  fileGuids:string[]
 }

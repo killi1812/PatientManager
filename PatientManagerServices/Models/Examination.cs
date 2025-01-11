@@ -15,4 +15,6 @@ public class Examination
     [ForeignKey("Illness")]
     public int? IllnessId { get; set; }
     public Illness? Illness { get; set; }
+    
+    public List<File> Files { get;set ; }
 }

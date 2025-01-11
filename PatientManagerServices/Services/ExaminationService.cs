@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PatientManagerServices.Dtos;
 using PatientManagerServices.Extras;
 using PatientManagerServices.Models;
+using File = PatientManagerServices.Models.File;
 
 namespace PatientManagerServices.Services;
 
@@ -14,6 +15,7 @@ public interface IExaminationService
     Task Delete(Guid guid);
     Task<List<Examination>> GetForIllness(Guid illnessGuid);
     Task<List<Examination>> GetAll(Guid medicalHistoryGuid);
+    Task AddFile(Guid guid, File file);
 }
 
 public class ExaminationService : IExaminationService
@@ -58,6 +60,7 @@ public class ExaminationService : IExaminationService
         var examination = await _context.Examinations
             .AsNoTracking()
             .Include(e => e.Illness)
+            .Include(e => e.Files)
             .FirstOrDefaultAsync(e => e.Guid == guid);
         if (examination == null)
             throw new NotFoundException($"examination with guid: {guid} not found");
@@ -108,5 +111,15 @@ public class ExaminationService : IExaminationService
             .ToListAsync();
 
         return examinations;
+    }
+
+    public async Task AddFile(Guid guid, File file)
+    {
+        var examination = await _context.Examinations.FirstOrDefaultAsync(e => e.Guid == guid);
+        if (examination == null)
+            throw new NotFoundException($"examination with guid: {guid} not found");
+        file.ExaminationId = examination.Id;
+        await _context.Files.AddAsync(file);
+        await _context.SaveChangesAsync();
     }
 }

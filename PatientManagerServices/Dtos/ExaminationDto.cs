@@ -6,5 +6,6 @@ public class ExaminationDto
     public string ExaminationTime { get; set; }
     public int Type { get; set; }
     public IllnessDto? Illness { get; set; }
+    public List<string> FileGuids { get; set; }
 }
 
