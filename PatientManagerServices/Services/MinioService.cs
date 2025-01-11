@@ -10,7 +10,7 @@ public interface IMinioService
 {
     public Task UploadFileAsync(string bucketName, string objectName, string filePath);
 
-    public Task DownloadFileAsync(string testBucker, string fileName, string filePath);
+    public Task DownloadFileAsync(string testBucket, string fileName, string filePath);
 
     Task<IEnumerable<string>> GetListFilesAsync(string testBucket);
 }
@@ -54,17 +54,17 @@ public class MinioService : IMinioService
         }
     }
 
-    public async Task DownloadFileAsync(string bucketName, string objectName, string filePath)
+    public async Task DownloadFileAsync(string testBucket, string objectName, string filePath)
     {
         try
         {
             var statObjectArgs = new StatObjectArgs()
-                .WithBucket(bucketName)
+                .WithBucket(testBucket)
                 .WithObject(objectName);
             await _minioClient.StatObjectAsync(statObjectArgs);
 
             var getObjectArgs = new GetObjectArgs()
-                .WithBucket(bucketName)
+                .WithBucket(testBucket)
                 .WithObject(objectName)
                 .WithFile(filePath);
             await _minioClient.GetObjectAsync(getObjectArgs);

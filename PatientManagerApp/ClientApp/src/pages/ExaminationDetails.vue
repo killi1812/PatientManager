@@ -70,6 +70,7 @@ onMounted(async () => {
       <v-col cols="12" v-if="!Editing">
         <h1>{{ ExaminationTypeText(examination.type) }}</h1>
         <p>Start: {{ examination.examinationTime }}</p>
+        <!-- @vue-expect-error -->
         <p v-if="illness" @click="router.push({name: 'IllnessDetails', params: {guid: illness.guid}})">
           Examination for illness: {{ illness.name }}
         </p>
@@ -82,7 +83,7 @@ onMounted(async () => {
           <v-text-field v-model="examination.examinationTime" label="Examination time"/>
         </v-col>
         <v-col cols="12">
-          <v-file-input density="default"></v-file-input>
+          <v-file-input v-model="selectedFile" density="default"/>
           <v-btn @click="handleFileUpload">Upload Picture</v-btn>
         </v-col>
       </div>

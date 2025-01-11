@@ -6,6 +6,7 @@ using PatientManagerServices.Models;
 using PatientManagerServices.Services;
 
 namespace PatientManagerApp.Controllers;
+
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
@@ -71,26 +72,29 @@ public class ExaminationController : ControllerBase
         var exDto = _mapper.Map<ExaminationDto>(ex);
         return exDto;
     }
-    
 
-    [HttpPost("[action]")]
-    public async Task<IActionResult> UploadFile([FromForm] FileDto file)
+
+    [HttpPost("[action]/{guid}")]
+    public async Task<IActionResult> Upload(string guid, [FromForm] FileDto file)
     {
         var filePath = Path.GetTempFileName();
+        Console.WriteLine(guid);
 
         await using (var stream = new FileStream(filePath, FileMode.Create))
         {
             await file.File.CopyToAsync(stream);
         }
 
-        await _minioService.UploadFileAsync(BucketName, file.File.FileName, filePath);
+        var newFileName = $"{Guid.NewGuid()}.{file.File.FileName.Split(".")[1]}";
+        await _minioService.UploadFileAsync(BucketName, newFileName, filePath);
 
         return Ok($"File {file.File.FileName} uploaded successfully.");
     }
 
-    [HttpGet("[action]")]
-    public async Task<IActionResult> DownloadFile(string fileName)
+    [HttpGet("[action]/{guid}")]
+    public async Task<IActionResult> DownloadFile(string guid)
     {
+        string fileName = "";
         var filePath = Path.GetTempFileName();
         await _minioService.DownloadFileAsync(BucketName, fileName, filePath);
         return PhysicalFile(filePath, "application/octet-stream", fileName);
