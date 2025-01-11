@@ -28,15 +28,15 @@ onMounted(async () => {
 
 <template>
   <div v-if="loading">
-    Loading...
+    <v-progress-circular indeterminate></v-progress-circular>
   </div>
   <div v-else class="container">
-    <img :src="imageData" alt="No picture" >
+    <img :src="imageData" alt="No picture">
   </div>
 </template>
 
 <style scoped>
 .container {
- width: 50rem;
+  width: 50rem;
 }
 </style>
